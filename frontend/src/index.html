@@ -2,12 +2,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz App - BUGSQUASHERS</title>
+    <title>QuizApp - BUGSQUASHERS</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Quiz App BUGSQUASHERS</h1>
+        <h1>QuizApp BUGSQUASHERS</h1>
 
         <div class="menu">
             <button id="start-quiz-btn" onclick="showQuizMenu()">Teacher</button>
@@ -16,17 +16,17 @@
             <div id="quiz-menu" class="hidden">
                 <h2>Select Quiz</h2>
                 <select id="quiz-select">
-                    <option value="" disabled selected>Select a subject</option>
+                    <option value="" disabled selected>Select a Quiz</option>
                     <option value="python">Python</option>
                     <option value="database">Database</option>
                     <option value="cloud">Cloud Computing</option>
                     <option value="security">Security</option>
-                  <option value="database">Operating System</option>
-                  <option value="database">Computer Network</option>
-                  <option value="database">Artificial Intelligence</option>
-                  <option value="database">UI/UX</option>
-                  <option value="database">Data Science</option>
-                  <option value="database">DSA</option>
+                  <option value="OS">OS</option>
+                  <option value="CN">Computer Network</option>
+                  <option value="AI">AI</option>
+                  <option value="UI">UI/UX</option>
+                  <option value="datascience">Data Science</option>
+                  <option value="DSA">DSA</option>
                 </select>
                 <button id="start-selected-quiz" onclick="startSelectedQuiz()">Start Selected Quiz</button>
             </div>
