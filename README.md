@@ -1,6 +1,7 @@
 # Quiz App
 # Team-a Bug Squashers
-![image](https://github.com/user-attachments/assets/966fa1b6-bc5d-45a0-bc6a-50637a62b20c)
+![image](https://github.com/user-attachments/assets/d8e5e588-dfc9-469a-b9b2-b898c43e6f13)
+
 
 ## Introduction
 This Quiz App is an interactive platform designed for educators to create and manage quizzes and for students to take quizzes and receive instant feedback. It simplifies creating, updating, and deleting quizzes and offers a seamless experience for students to test their knowledge in various computer science subjects.
