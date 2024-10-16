@@ -1,4 +1,4 @@
-# Quiz App
+# QuiZo
 # Team-a Bug Squashers
 ![image](https://github.com/user-attachments/assets/d8e5e588-dfc9-469a-b9b2-b898c43e6f13)
 
