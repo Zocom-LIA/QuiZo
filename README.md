@@ -1,6 +1,6 @@
 # QuiZo
 # Team-a Bug Squashers
-![image](https://github.com/user-attachments/assets/d8e5e588-dfc9-469a-b9b2-b898c43e6f13)
+![image](https://github.com/user-attachments/assets/46aa2610-d90f-41e5-af8e-cdd6b91b27fb)
 
 
 ## Introduction
