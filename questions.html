@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            overflow: hidden;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Question Management</h1>
+        <button onclick="window.location.href='teacher-sign-in.html';">Back to Dashboard</button>
+        <br><br>
+        <section>
+            <h2>Add Question</h2>
+            <input type="text" id="question_id" placeholder="Enter Question ID">
+            <input type="text" id="quiz_id" placeholder="Enter Quiz ID">
+            <input type="text" id="question_text" placeholder="Enter Question">
+            <input type="text" id="options" placeholder="Enter Options (comma-separated)">
+            <input type="text" id="correct_option" placeholder="Enter Correct Option">
+            <button onclick="addQuestion()">Add Question</button>
+        </section>
+
+        <br><br>
+        <section>
+            <h2>Get Question</h2>
+            <input type="text" id="get_quiz_id" placeholder="Enter Quiz ID for Question">
+            <input type="text" id="get_question_id" placeholder="Enter Question ID">
+            <button onclick="getQuestion()">Retrieve Question</button>
+            <div id="question_details"></div>
+        </section>
+        <br><br>
+        <section>
+            <h2>Delete Question</h2>
+            <input type="text" id="delete_quiz_id" placeholder="Enter Quiz ID for Deletion">
+            <input type="text" id="delete_question_id" placeholder="Enter Question ID to Delete">
+            <button onclick="deleteQuestion()">Delete Question</button>
+        </section>
+    </div>
+
+    <script>
+        // Define API endpoints for each function
+        const addQuestionUrl ='https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/question/{id}';
+        const getQuestionUrl ='https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/question/{id}';
+        const deleteQuestionUrl ='https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/question/{id}';
+    
+        function addQuestion() {
+            const questionData = {
+                question_id: document.getElementById('add_question_id').value,
+                quiz_id: document.getElementById('add_quiz_id').value,
+                question_text: document.getElementById('add_question_text').value,
+                options: document.getElementById('add_options').value.split(',').map(option => option.trim()),  // Assuming options are entered as comma-separated and need to be an array
+                correct_option: document.getElementById('add_correct_option').value
+            };
+    
+            fetch(addQuestionUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(questionData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Question added successfully');
+            })
+            .catch(error => {
+                console.error('Error adding question:', error);
+                alert('Failed to add question: ' + error.message);
+            });
+        }
+    
+        function getQuestion() {
+            const quizId = document.getElementById('get_quiz_id').value;
+            const questionId = document.getElementById('get_question_id').value;
+    
+            fetch(`${getQuestionUrl}?quiz_id=${quizId}&question_id=${questionId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    document.getElementById('question_details').textContent = JSON.stringify(data, null, 2);
+                } else {
+                    alert('No question found');
+                }
+            })
+            .catch(error => {
+                console.error('Error retrieving question:', error);
+                alert('Failed to retrieve question: ' + error.message);
+            });
+        }
+    
+        function deleteQuestion() {
+            const quizId = document.getElementById('delete_quiz_id').value;
+            const questionId = document.getElementById('delete_question_id').value;
+    
+            fetch(`${deleteQuestionUrl}?quiz_id=${quizId}&question_id=${questionId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Question deleted successfully');
+            })
+            .catch(error => {
+                console.error('Error deleting question:', error);
+                alert('Failed to delete question: ' + error.message);
+            });
+        }
+    </script>
+    
+</body>
+</html>

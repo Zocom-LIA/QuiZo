@@ -1,0 +1,145 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Quiz App
+
+  SAM Template for a Quiz Application using DynamoDB, Lambda, and API Gateway.
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 256
+    Runtime: python3.12
+    Handler: app.lambda_handler
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        QUIZ_TABLE: QuizBS
+        QUESTION_TABLE: QuestionBS
+        USER_TABLE: UserBS
+
+Resources:
+  QuizTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: QuizBS
+      AttributeDefinitions:
+        - AttributeName: "quiz_id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "quiz_id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  QuestionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: QuestionBS
+      AttributeDefinitions:
+        - AttributeName: "quiz_id"
+          AttributeType: "S"
+        - AttributeName: "question_id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "quiz_id"
+          KeyType: "HASH"
+        - AttributeName: "question_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UserBS
+      AttributeDefinitions:
+        - AttributeName: "user_id"
+          AttributeType: "S"
+        - AttributeName: "quiz_id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "user_id"
+          KeyType: "HASH"
+        - AttributeName: "quiz_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  QuizFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: QuizBS
+        - DynamoDBCrudPolicy:
+            TableName: QuestionBS
+        - DynamoDBCrudPolicy:
+            TableName: UserBS
+      Events:
+        CreateQuiz:
+          Type: Api
+          Properties:
+            Path: /quiz
+            Method: post
+        GetQuiz:
+          Type: Api
+          Properties:
+            Path: /quiz/{id}
+            Method: get
+        ListQuizzes:
+          Type: Api
+          Properties:
+            Path: /quiz
+            Method: get
+        UpdateQuiz:
+          Type: Api
+          Properties:
+            Path: /quiz/{id}
+            Method: put
+        DeleteQuiz:  
+          Type: Api
+          Properties:
+            Path: /quiz/{id}
+            Method: delete
+        DeleteQuestion:
+          Type: Api
+          Properties:
+            Path: /question/{quiz_id}/{question_id}
+            Method: delete
+        AddQuestion:
+          Type: Api
+          Properties:
+            Path: /question
+            Method: post
+        GetQuestion:
+          Type: Api
+          Properties:
+            Path: /question/{quiz_id}/{question_id}
+            Method: get
+        StartQuiz:
+          Type: Api
+          Properties:
+            Path: /user/start
+            Method: post
+        SubmitQuiz:
+          Type: Api
+          Properties:
+            Path: /user/submit
+            Method: put
+
+Outputs:
+  QuizApi:
+    Description: API Gateway endpoint URL for Prod stage for Quiz functions
+    Value: https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod
+  QuizFunction:
+    Description: Quiz Lambda Function ARN
+    Value: arn:aws:lambda:eu-north-1:600627324265:function:Quiz_BS
+  QuizFunctionIamRole:
+    Description: Implicit IAM Role created for Quiz function
+    Value: arn:aws:iam::600627324265:role/bugsquashers-lambda-role
