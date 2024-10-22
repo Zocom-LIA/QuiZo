@@ -72,8 +72,13 @@ def create_quiz(event):
     table.put_item(Item=item)
     return {
         'statusCode': 200,
-        'body': json.dumps('Quiz created successfully')
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'  # CORS Header
+        },
+        'body': json.dumps({'success': True, 'message': 'Quiz created successfully'})
     }
+
 
 def update_quiz(event):
     data = json.loads(event['body'])
