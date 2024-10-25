@@ -159,8 +159,15 @@ def add_question(event):
     table.put_item(Item=item)
     return {
         'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',  # Allow all domains for CORS
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',  # Specify allowed methods
+            'Access-Control-Allow-Headers': 'Content-Type'  # Specify allowed headers
+        },
         'body': json.dumps('Question added successfully')
     }
+
 
 def get_question(event):
     quiz_id = event['pathParameters']['quiz_id']
