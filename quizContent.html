@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .options {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Quiz Content</h1>
+    <div id="quizQuestions"></div>
+</div>
+
+<script>
+    // Retrieve quiz ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('quiz_id');
+    const questionApiUrl = `https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz/${id}`; // Adjust based on your API
+
+    // Fetch and display questions for the selected quiz
+    function fetchQuestions() {
+        fetch(questionApiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const quizQuestions = document.getElementById('quizQuestions');
+                quizQuestions.innerHTML = '';
+    
+                // Check if the data contains a question directly (instead of an array)
+                if (data && data.question_text) { // Change here to directly check for question_text
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `
+                        <strong>Question:</strong> ${data.question_text} <br>
+                        <div class="options">
+                            <ul>
+                                ${data.options.map(option => `<li>${option}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    quizQuestions.appendChild(questionDiv);
+                } else if (data && data.questions && data.questions.length > 0) {
+                    data.questions.forEach((question, index) => {
+                        const questionDiv = document.createElement('div');
+                        questionDiv.className = 'question';
+                        questionDiv.innerHTML = `
+                            <strong>Question ${index + 1}:</strong> ${question.question_text} <br>
+                            <div class="options">
+                                <ul>
+                                    ${question.options.map(option => `<li>${option}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                        quizQuestions.appendChild(questionDiv);
+                    });
+                } else {
+                    quizQuestions.innerHTML = '<p>No questions available for this quiz.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching questions:', error);
+                document.getElementById('quizQuestions').textContent = 'Failed to load questions.';
+            });
+    }
+    
+
+    // Fetch questions for the quiz on page load
+    if (id) {
+        fetchQuestions();
+    } else {
+        document.getElementById('quizQuestions').textContent = 'No quiz selected.';
+    }
+</script>
+
+</body>
+</html>

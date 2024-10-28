@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            overflow: hidden;
+        }
+        input, button, select {
+            padding: 10px;
+            margin: 10px;
+            display: block;
+        }
+        select {
+            width: calc(100% - 22px);
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>QuiZo' Student Dashboard</h1>
+        <button onclick="window.location.href='quizo.html';">Go to Main Homepage</button>
+        <br><br>
+
+        <section>
+            <h2>Select Quiz to Start</h2>
+            <select id="quizDropdown">
+                <option value="" disabled selected>Select a quiz</option>
+            </select>
+            <button onclick="startQuiz()">Start Quiz</button>
+            <div id="startQuizResponse" class="error"></div>
+        </section>
+        <br>
+    </div>
+
+    <script>
+        const apiUrl = 'https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz'; // Adjust this API URL
+
+        // Fetch quizzes and populate the dropdown
+        function fetchQuizzes() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const quizDropdown = document.getElementById('quizDropdown');
+                    quizDropdown.innerHTML = '<option value="" disabled selected>Select a quiz</option>'; // Reset dropdown
+
+                    const quizzes = data.quizzes || data; // Adjust based on your API response structure
+
+                    quizzes.forEach(quiz => {
+                        const option = document.createElement('option');
+                        option.value = quiz.quiz_id;
+                        option.textContent = quiz.title;
+                        quizDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    document.getElementById('startQuizResponse').textContent = 'Error fetching quizzes: ' + error.message;
+                    document.getElementById('startQuizResponse').className = 'error';
+                    console.error('Error fetching quizzes:', error);
+                });
+        }
+
+        // Start the selected quiz
+        function startQuiz() {
+            const quizId = document.getElementById('quizDropdown').value;
+            if (!quizId) {
+                document.getElementById('startQuizResponse').textContent = 'Please select a quiz.';
+                return;
+            }
+            // Redirect to quiz content page
+            window.location.href = `quizContent.html?quiz_id=${quizId}`;
+        }
+
+        // Load quizzes when the page loads
+        window.onload = fetchQuizzes;
+    </script>
+</body>
+</html>

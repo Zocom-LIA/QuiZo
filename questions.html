@@ -19,6 +19,7 @@
             display: block;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -53,34 +54,29 @@
     </div>
 
     <script>
-        // Define API endpoints for each function
-        const addQuestionUrl ='https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/question/{id}';
-        const getQuestionUrl ='https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/question/{id}';
-        const deleteQuestionUrl ='https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/question/{id}';
+        
     
         function addQuestion() {
-            const questionData = {
-                question_id: document.getElementById('add_question_id').value,
-                quiz_id: document.getElementById('add_quiz_id').value,
-                question_text: document.getElementById('add_question_text').value,
-                options: document.getElementById('add_options').value.split(',').map(option => option.trim()),  // Assuming options are entered as comma-separated and need to be an array
-                correct_option: document.getElementById('add_correct_option').value
+            var options = $('#options').val().split(',').map(option => option.trim());
+            var questionData = {
+                question_id: $('#question_id').val(),
+                quiz_id: $('#quiz_id').val(),
+                question_text: $('#question_text').val(),
+                options: options,
+                correct_option: $('#correct_option').val()
             };
-    
-            fetch(addQuestionUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+
+            $.ajax({
+                url: 'https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/question',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(questionData),
+                success: function(response) {
+                    alert('Question added successfully');
                 },
-                body: JSON.stringify(questionData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Question added successfully');
-            })
-            .catch(error => {
-                console.error('Error adding question:', error);
-                alert('Failed to add question: ' + error.message);
+                error: function(xhr, status, error) {
+                    alert('Error: ' + xhr.responseText);
+                }
             });
         }
     
