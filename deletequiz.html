@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 300px;
+            margin: auto;
+        }
+        input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e04040;
+        }
+        #responseMessage {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Delete Quiz</h1>
+        <input type="text" id="quizId" placeholder="Enter Quiz ID">
+        <button onclick="deleteQuiz()">Delete Quiz</button>
+        <div id="responseMessage"></div>
+        <button onclick="window.location.href='teacher-sign-in.html';">Homepage (Quiz)</button>
+    </div>
+   
+    <script>
+        const apiBaseURL = 'https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz';
+
+        function deleteQuiz() {
+            const quizId = document.getElementById('quizId').value;
+            if (!quizId) {
+                alert('Please enter a Quiz ID');
+                return;
+            }
+            fetch(`${apiBaseURL}/${quizId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to delete the quiz');
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('responseMessage').innerText = data;
+                document.getElementById('quizId').value = ''; // Clear input after deletion
+            })
+            .catch(error => {
+                console.error('Error deleting the quiz:', error);
+                document.getElementById('responseMessage').innerText = error.message;
+            });
+        }
+    </script>
+</body>
+</html>
