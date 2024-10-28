@@ -3,10 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz App</title>
+    <title>QuiZo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        button {
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: calc(100% - 22px); /* Full-width minus padding and border */
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #quizDetails {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <h1>Quiz App</h1>
+    <h1>QuiZo</h1>
     <button onclick="listQuizzes()">List Quizzes</button>
     <ul id="quizList"></ul>
     
@@ -16,24 +69,30 @@
     <div id="quizDetails"></div>
 
     <script>
-        const apiBaseURL = 'https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz';
+       const apiBaseURL = 'https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz';
 
-        function listQuizzes() {
-            fetch(apiBaseURL)
-                .then(response => response.json())
-                .then(quizzes => {
-                    const quizList = document.getElementById('quizList');
-                    quizList.innerHTML = ''; // Clear previous list
-                    quizzes.forEach(quiz => {
-                        const listItem = document.createElement('li');
-                        listItem.innerHTML = `<strong>Title:</strong> ${quiz.title}<br>
-                                              <strong>Description:</strong> ${quiz.description}<br>
-                                              <strong>Teacher:</strong> ${quiz.teacher_name}`;
-                        quizList.appendChild(listItem);
-                    });
-                })
-                .catch(error => console.error('Error fetching quizzes:', error));
-        }
+function listQuizzes() {
+    fetch(apiBaseURL)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                throw new Error(data.message || "Failed to load quizzes.");
+            }
+            const quizzes = data.quizzes; // Adjusted to match the updated Lambda output
+            const quizList = document.getElementById('quizList');
+            quizList.innerHTML = ''; // Clear previous list
+            quizzes.forEach(quiz => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<strong>Quiz Name:</strong> ${quiz.quiz_id}<br>
+                                      <strong>Title:</strong> ${quiz.title}<br>
+                                      <strong>Description:</strong> ${quiz.description}<br>
+                                      <strong>Teacher:</strong> ${quiz.teacher_name}`;
+                quizList.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error fetching quizzes:', error));
+}
+
         function getQuiz() {
     const quizId = document.getElementById('quizId').value;
     const url = `${apiBaseURL}/${quizId}`;
