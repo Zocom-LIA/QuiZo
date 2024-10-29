@@ -22,6 +22,19 @@
         .options {
             margin-top: 10px;
         }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #submitQuiz {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -29,62 +42,81 @@
 <div class="container">
     <h1>Quiz Content</h1>
     <div id="quizQuestions"></div>
+    <button id="submitQuiz">Submit Quiz</button>
+    <div class="result" id="quizResult"></div>
 </div>
 
 <script>
     // Retrieve quiz ID from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('quiz_id');
-    const questionApiUrl = `https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz/${id}`; // Adjust based on your API
+    const quizId = urlParams.get('quiz_id'); // Get the quiz ID from the URL
+    const questionApiUrl = `https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz/${quizId}`; // API URL for fetching questions
 
-    // Fetch and display questions for the selected quiz
+    // Function to fetch and display questions from the API
     function fetchQuestions() {
         fetch(questionApiUrl)
             .then(response => response.json())
             .then(data => {
                 const quizQuestions = document.getElementById('quizQuestions');
                 quizQuestions.innerHTML = '';
-    
-                // Check if the data contains a question directly (instead of an array)
-                if (data && data.question_text) { // Change here to directly check for question_text
-                    const questionDiv = document.createElement('div');
-                    questionDiv.className = 'question';
-                    questionDiv.innerHTML = `
-                        <strong>Question:</strong> ${data.question_text} <br>
-                        <div class="options">
-                            <ul>
-                                ${data.options.map(option => `<li>${option}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `;
-                    quizQuestions.appendChild(questionDiv);
-                } else if (data && data.questions && data.questions.length > 0) {
-                    data.questions.forEach((question, index) => {
-                        const questionDiv = document.createElement('div');
-                        questionDiv.className = 'question';
-                        questionDiv.innerHTML = `
-                            <strong>Question ${index + 1}:</strong> ${question.question_text} <br>
-                            <div class="options">
-                                <ul>
-                                    ${question.options.map(option => `<li>${option}</li>`).join('')}
-                                </ul>
-                            </div>
-                        `;
-                        quizQuestions.appendChild(questionDiv);
-                    });
-                } else {
-                    quizQuestions.innerHTML = '<p>No questions available for this quiz.</p>';
-                }
+
+                // Create a question div
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.dataset.correctAnswer = data.correct_option; // Store the correct answer
+
+                // Construct the HTML for the question and options
+                questionDiv.innerHTML = `
+                    <strong>${data.question_text}</strong><br>
+                    <div class="options">
+                        ${data.options.map(option => `
+                            <label>
+                                <input type="checkbox" name="option-${data.question_id}" value="${option}">
+                                ${option}
+                            </label><br>
+                        `).join('')}
+                    </div>
+                `;
+                quizQuestions.appendChild(questionDiv);
             })
             .catch(error => {
                 console.error('Error fetching questions:', error);
                 document.getElementById('quizQuestions').textContent = 'Failed to load questions.';
             });
     }
-    
+
+    // Function to submit quiz and calculate score
+    function submitQuiz() {
+        const resultDiv = document.getElementById('quizResult');
+        const questions = document.querySelectorAll('.question');
+        let score = 0;
+
+        questions.forEach((questionDiv) => {
+            const checkboxes = questionDiv.querySelectorAll(`input[type="checkbox"]`);
+            const correctAnswer = questionDiv.dataset.correctAnswer.trim(); // Get correct answer
+
+            // Get selected options from checkboxes
+            const selectedOptions = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value.trim());
+
+            console.log('Selected Options:', selectedOptions);
+            console.log('Correct Answer:', correctAnswer);
+
+            // Check if the selected options include the correct answer
+            if (selectedOptions.includes(correctAnswer)) {
+                score++; // Increment score for each correct answer selected
+            }
+        });
+
+        // Show the result
+        resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
+    }
+
+    document.getElementById('submitQuiz').addEventListener('click', submitQuiz);
 
     // Fetch questions for the quiz on page load
-    if (id) {
+    if (quizId) {
         fetchQuestions();
     } else {
         document.getElementById('quizQuestions').textContent = 'No quiz selected.';
