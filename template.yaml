@@ -132,6 +132,11 @@ Resources:
           Properties:
             Path: /user/submit
             Method: put
+        ListUsers:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: GET
 
 Outputs:
   QuizApi:

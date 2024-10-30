@@ -35,12 +35,24 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .loading {
+            font-weight: bold;
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Quiz Content</h1>
+    <h1 id="quizTitle">Quiz Title Here</h1> <!-- Added an element for quiz title -->
+
+    <label for="userDropdown">Select User:</label>
+    <select id="userDropdown">
+        <option value="" disabled selected>Select a user</option>
+    </select>
+
+    <br>
+
     <div id="quizQuestions"></div>
     <button id="submitQuiz">Submit Quiz</button>
     <div class="result" id="quizResult"></div>
@@ -51,14 +63,54 @@
     const urlParams = new URLSearchParams(window.location.search);
     const quizId = urlParams.get('quiz_id'); // Get the quiz ID from the URL
     const questionApiUrl = `https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz/${quizId}`; // API URL for fetching questions
+    const userApiUrl = `https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/user`;
 
-    // Function to fetch and display questions from the API
+    function fetchUsers() {
+        const params = {
+            TableName: 'UserBS' 
+        };
+    
+        dynamoDB.scan(params, (err, data) => {
+            if (err) {
+                console.error('Error fetching users:', err);
+                document.getElementById('quizQuestions').textContent = 'Failed to load users.';
+                return;
+            }
+            
+            const userDropdown = document.getElementById('userDropdown');
+            userDropdown.innerHTML = '<option value="" disabled selected>Select a user</option>'; // Reset dropdown
+    
+            // Populate dropdown with user IDs
+            data.Items.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.user_id;
+                option.textContent = user.user_id; // Display user_id as the name
+                userDropdown.appendChild(option);
+            });
+        });
+    }
+
+    // Function to fetch and display questions and the quiz title from the API
     function fetchQuestions() {
+        const loadingMessage = document.createElement('div');
+        loadingMessage.className = 'loading';
+        loadingMessage.textContent = 'Loading questions...';
+        document.body.appendChild(loadingMessage);
+
         fetch(questionApiUrl)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
+                // Display quiz title
+                const quizTitle = document.getElementById('quizTitle');
+                quizTitle.textContent = data.title; 
+
                 const quizQuestions = document.getElementById('quizQuestions');
-                quizQuestions.innerHTML = '';
+                quizQuestions.innerHTML = ''; // Clear previous questions
 
                 // Create a question div
                 const questionDiv = document.createElement('div');
@@ -78,10 +130,12 @@
                     </div>
                 `;
                 quizQuestions.appendChild(questionDiv);
+                document.body.removeChild(loadingMessage); // Remove loading message
             })
             .catch(error => {
                 console.error('Error fetching questions:', error);
                 document.getElementById('quizQuestions').textContent = 'Failed to load questions.';
+                document.body.removeChild(loadingMessage); // Remove loading message
             });
     }
 
@@ -115,12 +169,14 @@
 
     document.getElementById('submitQuiz').addEventListener('click', submitQuiz);
 
-    // Fetch questions for the quiz on page load
+    // Fetch users and questions on page load
     if (quizId) {
+       
         fetchQuestions();
     } else {
         document.getElementById('quizQuestions').textContent = 'No quiz selected.';
     }
+    
 </script>
 
 </body>

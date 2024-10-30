@@ -44,12 +44,31 @@ def lambda_handler(event, context):
         return start_quiz(event)
     elif path == "/user/submit" and http_method == "PUT":
         return submit_quiz(event)
+    elif path == "/user" and http_method == "GET":
+        return list_users(event)
     else:
         return {
             'statusCode': 400,
             'body': json.dumps('Unsupported route')
         }
 
+
+def list_users(event):
+    # Initialize a DynamoDB client
+    table = dynamodb.Table('UserBS')  # Replace with your actual table name
+
+    # Scan the table to get all users
+    response = table.scan()
+    users = response.get('Items', [])
+    
+    # Extract user IDs
+    user_ids = [user['user_id'] for user in users]  # List comprehension to get user IDs
+
+    # Return the response with user IDs
+    return {
+        'statusCode': 200,
+        'body': json.dumps(user_ids)
+    }
 
 # Function to get current timestamp
 def get_current_timestamp():
