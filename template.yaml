@@ -15,38 +15,24 @@ Globals:
       - x86_64
     Environment:
       Variables:
-        QUIZ_TABLE: QuizBS
-        QUESTION_TABLE: QuestionBS
+        QUIZ_TABLE: QQBS
+        QUESTION_TABLE: QQBS
         USER_TABLE: UserBS
 
 Resources:
   QuizTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: QuizBS
+      TableName: QQBS
       AttributeDefinitions:
-        - AttributeName: "quiz_id"
+        - AttributeName: "PK"
+          AttributeType: "S"
+        - AttributeName: "SK"
           AttributeType: "S"
       KeySchema:
-        - AttributeName: "quiz_id"
+        - AttributeName: "PK"
           KeyType: "HASH"
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-
-  QuestionTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: QuestionBS
-      AttributeDefinitions:
-        - AttributeName: "quiz_id"
-          AttributeType: "S"
-        - AttributeName: "question_id"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: "quiz_id"
-          KeyType: "HASH"
-        - AttributeName: "question_id"
+        - AttributeName: "SK"
           KeyType: "RANGE"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
@@ -76,9 +62,7 @@ Resources:
       CodeUri: hello_world/
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: QuizBS
-        - DynamoDBCrudPolicy:
-            TableName: QuestionBS
+            TableName: QQBS
         - DynamoDBCrudPolicy:
             TableName: UserBS
       Events:
@@ -90,9 +74,9 @@ Resources:
         GetQuiz:
           Type: Api
           Properties:
-            Path: /quiz/{id}
+            Path: /quiz/{quiz_id}
             Method: get
-        ListQuizzes:
+        ListQuizzes:  # New event for listing all quizzes
           Type: Api
           Properties:
             Path: /quiz
@@ -100,12 +84,12 @@ Resources:
         UpdateQuiz:
           Type: Api
           Properties:
-            Path: /quiz/{id}
+            Path: /quiz/{quiz_id}
             Method: put
-        DeleteQuiz:  
+        DeleteQuiz:
           Type: Api
           Properties:
-            Path: /quiz/{id}
+            Path: /quiz/{quiz_id}
             Method: delete
         DeleteQuestion:
           Type: Api
@@ -136,15 +120,15 @@ Resources:
           Type: Api
           Properties:
             Path: /user
-            Method: GET
+            Method: get
 
 Outputs:
   QuizApi:
     Description: API Gateway endpoint URL for Prod stage for Quiz functions
-    Value: https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod
+    Value: https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod
   QuizFunction:
     Description: Quiz Lambda Function ARN
-    Value: arn:aws:lambda:eu-north-1:600627324265:function:Quiz_BS
+    Value: !GetAtt QuizFunction.Arn
   QuizFunctionIamRole:
     Description: Implicit IAM Role created for Quiz function
-    Value: arn:aws:iam::600627324265:role/bugsquashers-lambda-role
+    Value: !GetAtt QuizFunctionRole.Arn

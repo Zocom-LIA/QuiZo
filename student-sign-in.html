@@ -50,23 +50,36 @@
     </div>
 
     <script>
-        const apiUrl = 'https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz'; // Adjust this API URL
-        
+        const apiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
         // Fetch quizzes and populate the dropdown
         function fetchQuizzes() {
             fetch(apiUrl)
-                .then(response => response.json())
+                .then(response => {
+                    console.log("Response status:", response.status); // Log status code
+                    console.log("Response headers:", response.headers); // Log headers
+        
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(`HTTP error! Status: ${response.status}, Message: ${err.message}`);
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log("Fetched data:", data); // Log the fetched data
+                    
                     const quizDropdown = document.getElementById('quizDropdown');
                     quizDropdown.innerHTML = '<option value="" disabled selected>Select a quiz</option>'; // Reset dropdown
-
-                    const quizzes = data.quizzes || data; // Adjust based on your API response structure
-
-                    quizzes.forEach(quiz => {
-                        const option = document.createElement('option');
-                        option.value = quiz.quiz_id;
-                        option.textContent = quiz.title;
-                        quizDropdown.appendChild(option);
+        
+                    // Loop through data assuming it is an array of quiz objects
+                    data.forEach(quiz => {
+                        // Check if the current item is a quiz metadata (first object)
+                        if (quiz.SK === "META") { // Only add quiz metadata to dropdown
+                            const option = document.createElement('option');
+                            option.value = quiz.PK; // Use PK as the value for the option
+                            option.textContent = quiz.title; // Display the quiz title
+                            quizDropdown.appendChild(option);
+                        }
                     });
                 })
                 .catch(error => {
@@ -75,16 +88,25 @@
                     console.error('Error fetching quizzes:', error);
                 });
         }
-
+        
         // Start the selected quiz
         function startQuiz() {
-            const quizId = document.getElementById('quizDropdown').value;
+            const quizId = document.getElementById('quizDropdown').value; // Get selected quiz ID
             if (!quizId) {
-                document.getElementById('startQuizResponse').textContent = 'Please select a quiz.';
+                document.getElementById('startQuizResponse').textContent = 'Please select a quiz.'; // Display error if no quiz is selected
                 return;
             }
-            // Redirect to quiz content page
-            window.location.href = `quizContent.html?quiz_id=${quizId}`;
+
+            // Extract ID that comes after 'QUIZ#' if it exists
+            const cleanedQuizId = quizId.split('QUIZ#')[1]; // Split the string by 'QUIZ#' and take the second part
+
+            if (!cleanedQuizId) {
+                document.getElementById('startQuizResponse').textContent = 'Invalid quiz ID.'; // Handle case where split doesn't return an ID
+                return;
+            }
+
+            // Redirect to quiz content page with the cleaned ID
+            window.location.href = `quizContent.html?quiz_id=${encodeURIComponent(cleanedQuizId)}`; // Use encodeURIComponent for safety
         }
 
         // Load quizzes when the page loads

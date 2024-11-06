@@ -44,139 +44,97 @@
 <body>
 
 <div class="container">
-    <h1 id="quizTitle">Quiz Title Here</h1> <!-- Added an element for quiz title -->
-
-    <label for="userDropdown">Select User:</label>
-    <select id="userDropdown">
-        <option value="" disabled selected>Select a user</option>
-    </select>
-
-    <br>
-
+    <h1 id="quizTitle">Quiz Title Here</h1>
     <div id="quizQuestions"></div>
     <button id="submitQuiz">Submit Quiz</button>
     <div class="result" id="quizResult"></div>
+    <div id="errorMessage" class="error"></div>
 </div>
 
 <script>
-    // Retrieve quiz ID from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const quizId = urlParams.get('quiz_id'); // Get the quiz ID from the URL
-    const questionApiUrl = `https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz/${quizId}`; // API URL for fetching questions
-    const userApiUrl = `https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/user`;
+    const apiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
+    const quizId = new URLSearchParams(window.location.search).get('quiz_id');
 
-    function fetchUsers() {
-        const params = {
-            TableName: 'UserBS' 
-        };
-    
-        dynamoDB.scan(params, (err, data) => {
-            if (err) {
-                console.error('Error fetching users:', err);
-                document.getElementById('quizQuestions').textContent = 'Failed to load users.';
-                return;
-            }
-            
-            const userDropdown = document.getElementById('userDropdown');
-            userDropdown.innerHTML = '<option value="" disabled selected>Select a user</option>'; // Reset dropdown
-    
-            // Populate dropdown with user IDs
-            data.Items.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.user_id;
-                option.textContent = user.user_id; // Display user_id as the name
-                userDropdown.appendChild(option);
-            });
-        });
-    }
+    function fetchQuizQuestions() {
+        if (!quizId) {
+            document.getElementById('errorMessage').textContent = 'Quiz ID not found.';
+            return;
+        }
 
-    // Function to fetch and display questions and the quiz title from the API
-    function fetchQuestions() {
-        const loadingMessage = document.createElement('div');
-        loadingMessage.className = 'loading';
-        loadingMessage.textContent = 'Loading questions...';
-        document.body.appendChild(loadingMessage);
-
-        fetch(questionApiUrl)
+        const fetchUrl = `${apiUrl}/${encodeURIComponent(quizId)}`;
+        fetch(fetchUrl)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
+                if (!response.ok) throw new Error('Failed to fetch questions');
                 return response.json();
             })
             .then(data => {
-                // Display quiz title
-                const quizTitle = document.getElementById('quizTitle');
-                quizTitle.textContent = data.title; 
-
-                const quizQuestions = document.getElementById('quizQuestions');
-                quizQuestions.innerHTML = ''; // Clear previous questions
-
-                // Create a question div
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.dataset.correctAnswer = data.correct_option; // Store the correct answer
-
-                // Construct the HTML for the question and options
-                questionDiv.innerHTML = `
-                    <strong>${data.question_text}</strong><br>
-                    <div class="options">
-                        ${data.options.map(option => `
-                            <label>
-                                <input type="checkbox" name="option-${data.question_id}" value="${option}">
-                                ${option}
-                            </label><br>
-                        `).join('')}
-                    </div>
-                `;
-                quizQuestions.appendChild(questionDiv);
-                document.body.removeChild(loadingMessage); // Remove loading message
+                if (data.questions && Array.isArray(data.questions)) {
+                    displayQuestions(data.questions);
+                    document.getElementById('quizTitle').textContent = data.title || 'Quiz Title Here';
+                } else {
+                    document.getElementById('errorMessage').textContent = 'Quiz questions data not found.';
+                }
             })
             .catch(error => {
-                console.error('Error fetching questions:', error);
-                document.getElementById('quizQuestions').textContent = 'Failed to load questions.';
-                document.body.removeChild(loadingMessage); // Remove loading message
+                document.getElementById('errorMessage').textContent = 'Error fetching quiz questions: ' + error.message;
             });
     }
 
-    // Function to submit quiz and calculate score
+    window.onload = fetchQuizQuestions;
+
+    function displayQuestions(questions) {
+        const questionsContainer = document.getElementById('quizQuestions');
+        questionsContainer.innerHTML = '';
+
+        if (!questions.length) {
+            questionsContainer.innerHTML = '<p>No questions found for this quiz.</p>';
+            return;
+        }
+
+        questions.forEach(question => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            
+            // Attach correct option as a data attribute
+            questionDiv.dataset.correctOption = question.correct_option;
+
+            // Render question and options
+            questionDiv.innerHTML = `
+                <h3>${question.question_text}</h3>
+                <ul class="options">
+                    ${question.options.map(option => `<li><input type="checkbox" value="${option}"> ${option}</li>`).join('')}
+                </ul>
+            `;
+            questionsContainer.appendChild(questionDiv);
+        });
+    }
+
     function submitQuiz() {
         const resultDiv = document.getElementById('quizResult');
         const questions = document.querySelectorAll('.question');
         let score = 0;
 
-        questions.forEach((questionDiv) => {
+        questions.forEach((questionDiv, index) => {
             const checkboxes = questionDiv.querySelectorAll(`input[type="checkbox"]`);
-            const correctAnswer = questionDiv.dataset.correctAnswer.trim(); // Get correct answer
+            const correctOption = questionDiv.dataset.correctOption.trim();
 
-            // Get selected options from checkboxes
             const selectedOptions = Array.from(checkboxes)
                 .filter(checkbox => checkbox.checked)
                 .map(checkbox => checkbox.value.trim());
 
+            console.log(`Question ${index + 1}:`);
             console.log('Selected Options:', selectedOptions);
-            console.log('Correct Answer:', correctAnswer);
+            console.log('Correct Option:', correctOption);
 
-            // Check if the selected options include the correct answer
-            if (selectedOptions.includes(correctAnswer)) {
-                score++; // Increment score for each correct answer selected
+            if (selectedOptions.length === 1 && selectedOptions[0] === correctOption) {
+                score++;
             }
         });
 
-        // Show the result
         resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
     }
 
     document.getElementById('submitQuiz').addEventListener('click', submitQuiz);
-
-    // Fetch users and questions on page load
-    if (quizId) {
-       
-        fetchQuestions();
-    } else {
-        document.getElementById('quizQuestions').textContent = 'No quiz selected.';
-    }
-    
 </script>
 
 </body>
