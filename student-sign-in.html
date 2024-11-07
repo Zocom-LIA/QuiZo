@@ -39,11 +39,11 @@
         <br><br>
 
         <section>
-            <h2>Select Quiz to Start</h2>
+            <h2>Select Quiz</h2>
             <select id="quizDropdown">
                 <option value="" disabled selected>Select a quiz</option>
             </select>
-            <button onclick="startQuiz()">Start Quiz</button>
+            <button onclick="goToQuiz()">Go to Quiz</button>
             <div id="startQuizResponse" class="error"></div>
         </section>
         <br>
@@ -51,6 +51,7 @@
 
     <script>
         const apiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
+        
         // Fetch quizzes and populate the dropdown
         function fetchQuizzes() {
             fetch(apiUrl)
@@ -89,15 +90,15 @@
                 });
         }
         
-        // Start the selected quiz
-        function startQuiz() {
+        // Go to the selected quiz content page
+        function goToQuiz() {
             const quizId = document.getElementById('quizDropdown').value; // Get selected quiz ID
             if (!quizId) {
                 document.getElementById('startQuizResponse').textContent = 'Please select a quiz.'; // Display error if no quiz is selected
                 return;
             }
 
-            // Extract ID that comes after 'QUIZ#' if it exists
+            // Extract the ID that comes after 'QUIZ#' if it exists
             const cleanedQuizId = quizId.split('QUIZ#')[1]; // Split the string by 'QUIZ#' and take the second part
 
             if (!cleanedQuizId) {

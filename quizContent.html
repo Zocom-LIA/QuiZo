@@ -22,10 +22,6 @@
         .options {
             margin-top: 10px;
         }
-        .result {
-            margin-top: 20px;
-            font-weight: bold;
-        }
         #submitQuiz {
             margin-top: 20px;
             padding: 10px 15px;
@@ -34,6 +30,23 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+        }
+        #startQuiz {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
         }
         .loading {
             font-weight: bold;
@@ -44,16 +57,58 @@
 <body>
 
 <div class="container">
+    <section>
+        <h2>Select User</h2>
+        <select id="userSelect">
+            <option value="" disabled selected>Select a user</option>
+            <!-- Users will be populated here -->
+        </select>
+        <!-- Move Start Quiz button below -->
+        <button id="startQuiz" onclick="startQuiz()">Start Quiz</button>
+    </section>
+    
     <h1 id="quizTitle">Quiz Title Here</h1>
     <div id="quizQuestions"></div>
-    <button id="submitQuiz">Submit Quiz</button>
-    <div class="result" id="quizResult"></div>
+    
+    <button id="submitQuiz" onclick="submitQuiz()" disabled>Submit Quiz</button>
+    
+    <div id="quizResult" class="success"></div>
     <div id="errorMessage" class="error"></div>
 </div>
 
 <script>
     const apiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
+    const userApiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/user'; // API endpoint for users
+    const startQuizApiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/user/start'; // API endpoint to start quiz
+    const submitQuizApiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/user/submit'; // API endpoint to submit quiz
+
     const quizId = new URLSearchParams(window.location.search).get('quiz_id');
+    let userId = null;
+
+    function fetchUsers() {
+        fetch(userApiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Users fetched:', data);  
+                const userSelect = document.getElementById('userSelect');
+                userSelect.innerHTML = '<option value="" disabled selected>Select a user</option>'; // Reset dropdown
+                data.forEach(userId => {
+                    const option = document.createElement('option');
+                    option.value = userId;  // Set the user_id as the value
+                    option.textContent = userId;  // Display user_id in the dropdown text
+                    userSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching users:', error);
+                document.getElementById('errorMessage').textContent = 'Error fetching users: ' + error.message;
+            });
+    }
 
     function fetchQuizQuestions() {
         if (!quizId) {
@@ -80,26 +135,146 @@
             });
     }
 
-    window.onload = fetchQuizQuestions;
+    // Start quiz - handle user and quiz details, log to DynamoDB
+    function startQuiz() {
+        userId = document.getElementById('userSelect').value;
+    
+        if (!userId) {
+            document.getElementById('errorMessage').textContent = 'Please select a user.';
+            return;
+        }
+    
+        const startQuizData = {
+            user_id: userId,
+            quiz_id: quizId,
+            attempted_at: new Date().toISOString(),
+            quiz_status: 'Started'
+        };
+    
+        // Send request to start the quiz
+        fetch(startQuizApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(startQuizData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Start Quiz API Response:', data); // Log the entire response data for debugging
+    
+            // Adjust the success check based on actual API response structure
+            if (data === 'Quiz started successfully') {
+                document.getElementById('quizResult').textContent = 'Quiz started successfully!';
+                document.getElementById('startQuiz').disabled = true; // Disable Start button
+                document.getElementById('submitQuiz').disabled = false; // Enable Submit button
+            } else {
+                // If response does not match success, show error message
+                document.getElementById('errorMessage').textContent = 'Failed to start quiz: ' + (data.message || 'Unknown error');
+            }
+        })
+        .catch(error => {
+            console.error('Error starting quiz:', error); // Log any errors for debugging
+            document.getElementById('errorMessage').textContent = 'Error starting quiz: ' + error.message;
+        });
+    }
+    
+    
 
+    // Submit quiz - save answers and update DynamoDB with user results
+    function submitQuiz() {
+        const resultDiv = document.getElementById('quizResult');
+        const questions = document.querySelectorAll('.question');
+        let score = 0;
+    
+        // Calculate the score based on correct answers
+        questions.forEach((questionDiv, index) => {
+            const checkboxes = questionDiv.querySelectorAll(`input[type="checkbox"]`);
+            const correctOptions = questionDiv.dataset.correctOption?.trim().split(','); // Assuming correct answers are comma-separated
+    
+            const selectedOptions = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value.trim());
+    
+            console.log(`Question ${index + 1}:`);
+            console.log('Selected Options:', selectedOptions);
+            console.log('Correct Options:', correctOptions);
+    
+            // Compare the selected answers with the correct answers
+            if (selectedOptions.length === correctOptions.length && selectedOptions.every(option => correctOptions.includes(option))) {
+                score++; // Increment score for correct answers
+            }
+        });
+    
+        // Display the score before submitting
+        resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
+    
+        // Prepare the data to submit
+        const submitData = {
+            user_id: userId,
+            quiz_id: quizId,
+            score: score,  // Update the score with the number of correct answers
+            submitted_at: new Date().toISOString(),  // Set the submitted_at to the current time
+            status: 'Submitted',  // Change the status to 'Submitted'
+            time_taken: calculateTimeTaken()  // Calculate time taken for the quiz
+        };
+    
+        // Send the data to submit the quiz
+        fetch(submitQuizApiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer YOUR_TOKEN_HERE'  // Add the authentication token if necessary
+            },
+            body: JSON.stringify(submitData)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to submit quiz: ' + response.statusText);
+            }
+        })
+        .then(data => {
+            if (data.success) {
+                resultDiv.textContent = `You scored ${score} out of ${questions.length}. Quiz submitted successfully!`;
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting quiz:', error);
+            document.getElementById('errorMessage').textContent = 'Error submitting quiz: ' + error.message;
+        });
+    }
+    
+    // Function to calculate the time taken for the quiz
+    function calculateTimeTaken() {
+        const startTime = new Date(localStorage.getItem('quizStartTime'));  // Assuming you saved the start time in localStorage
+        const endTime = new Date();
+        const timeTakenInSeconds = Math.floor((endTime - startTime) / 1000);  // Time taken in seconds
+        return timeTakenInSeconds;
+    }
+    
+
+    
+
+    // Display quiz questions on the page
     function displayQuestions(questions) {
         const questionsContainer = document.getElementById('quizQuestions');
         questionsContainer.innerHTML = '';
-
+   
         if (!questions.length) {
             questionsContainer.innerHTML = '<p>No questions found for this quiz.</p>';
             return;
         }
-
+   
         questions.forEach(question => {
             const questionDiv = document.createElement('div');
             questionDiv.className = 'question';
-            
-            // Attach correct option as a data attribute
-            questionDiv.dataset.correctOption = question.correct_option;
-
+            questionDiv.dataset.id = question.question_id;  // Assuming each question has a 'question_id'
+            questionDiv.dataset.correctOption = question.correct_option;  // Add correct answer to data attribute
+   
             // Render question and options
-            questionDiv.innerHTML = `
+            questionDiv.innerHTML = `  
                 <h3>${question.question_text}</h3>
                 <ul class="options">
                     ${question.options.map(option => `<li><input type="checkbox" value="${option}"> ${option}</li>`).join('')}
@@ -108,33 +283,13 @@
             questionsContainer.appendChild(questionDiv);
         });
     }
+   
 
-    function submitQuiz() {
-        const resultDiv = document.getElementById('quizResult');
-        const questions = document.querySelectorAll('.question');
-        let score = 0;
-
-        questions.forEach((questionDiv, index) => {
-            const checkboxes = questionDiv.querySelectorAll(`input[type="checkbox"]`);
-            const correctOption = questionDiv.dataset.correctOption.trim();
-
-            const selectedOptions = Array.from(checkboxes)
-                .filter(checkbox => checkbox.checked)
-                .map(checkbox => checkbox.value.trim());
-
-            console.log(`Question ${index + 1}:`);
-            console.log('Selected Options:', selectedOptions);
-            console.log('Correct Option:', correctOption);
-
-            if (selectedOptions.length === 1 && selectedOptions[0] === correctOption) {
-                score++;
-            }
-        });
-
-        resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
-    }
-
-    document.getElementById('submitQuiz').addEventListener('click', submitQuiz);
+    // Load quiz questions and users
+    window.onload = () => {
+        fetchQuizQuestions();
+        fetchUsers();  // Fetch the list of users
+    };
 </script>
 
 </body>
