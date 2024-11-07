@@ -5,153 +5,330 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Management Dashboard</title>
     <style>
+        /* Global Styling */
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
         }
         .container {
-            width: 90%;
-            margin: auto;
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
             overflow: hidden;
         }
-        input, button, select {
-            padding: 10px;
-            margin: 10px;
-            display: block;
+
+        /* Button Styling */
+        button {
+            padding: 10px 15px;
+            margin-top: 10px;
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        select {
-            width: calc(100% - 22px);
-            display: inline-block;
+        button:hover {
+            background-color: #2980b9;
         }
-        button.delete-btn {
-            display: inline-block;
-            vertical-align: top;
-            margin-top: 20px;
+
+        /* Input and Form Styling */
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .delete-button {
+            background-color: #e74c3c;
+        }
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Section Styling */
+        section {
+            margin-bottom: 20px;
+            padding: 10px 20px;
+        }
+        #message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+        }
+
+        /* Quiz List Styling */
+        ul#quizList {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul#quizList li {
+            padding: 12px;
+            margin: 8px 0;
+            background-color: #ecf0f1;
+            border-left: 5px solid #3498db;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    
-    <div class="container">
-        <h1>QuiZo' Teacher Dashboard</h1>
-        <button onclick="window.location.href='quizo.html';">Go to Main Homepage</button><br>
-        <!-- Add this button somewhere in your main dashboard -->
-        <button onclick="window.location.href='questions.html';">Manage Questions</button>
-        <button onclick="window.location.href='quiz.html';">Get Quiz</button>
-        <button onclick="window.location.href='deletequiz.html';">Delete Quiz</button>
-        <div id="message" style="color: green; margin-bottom: 20px;"></div>
-        <br><br><br>
 
+<div class="container">
+    <h1>Quiz Management Dashboard</h1>
+
+    <!-- Create Quiz Section -->
+    <section>
+        <h2>Create Quiz</h2>
+        <input type="text" id="quiz_id" placeholder="Enter Quiz ID" required>
+        <input type="text" id="title" placeholder="Enter Quiz Title" required>
+        <input type="text" id="description" placeholder="Enter Quiz Description" required>
+        <input type="text" id="teacher_id" placeholder="Enter Teacher ID" required>
         
+        <h3>Questions</h3>
+        <div id="questions-container">
+            <div class="question">
+                <input type="text" class="question_text" placeholder="Enter Question Text" required>
+                <input type="text" class="option" placeholder="Option 1" required>
+                <input type="text" class="option" placeholder="Option 2" required>
+                <input type="text" class="option" placeholder="Option 3" required>
+                <input type="text" class="option" placeholder="Option 4" required>
+                <input type="text" class="correct_option" placeholder="Enter Correct Option" required>
+            </div>
+        </div>
+        <button onclick="addQuestion()">Add Another Question</button>
+        <button onclick="createQuiz()">Add Quiz</button>
+        <div id="message"></div>
+    </section>
 
-        <section>
-            <h2>Create Quiz</h2>
-            <input type="text" id="quiz_id" placeholder="Enter Quiz ID">
-            <input type="text" id="title" placeholder="Enter Title">
-            <input type="text" id="description" placeholder="Enter Description">
-            <input type="text" id="teacher_id" placeholder="Enter Teacher ID">
-            <input type="text" id="teacher_name" placeholder="Enter Teacher Name">
-            <button onclick="addQuiz()">Add Quiz</button>
-        </section>
-        <br>
-        <section>
-            <h2>Available Quizzes</h2>
-            <button onclick="fetchQuizzes()">Show Quizzes</button>
-            <ul id="quizList"></ul>
-        </section>
-        <br>
-        <section>
-            <h2>Delete Quiz</h2>
-            <p>Select a quiz from Available Quiz and click 'Delete' to remove it.</p>
-            <select id="deleteDropdown"></select>
-            <button class="delete-btn" onclick="deleteSelectedQuiz()">Delete Selected Quiz</button>
-        </section>
-    </div>
+    <!-- List Quizzes Section -->
+    <section>
+        <h2>Available Quizzes</h2>
+        <button onclick="listQuizzes()">Show Quizzes</button>
+        <ul id="quizList"></ul>
+    </section>
 
-    <script>
-        const apiUrl = 'https://9uixrbxu8d.execute-api.eu-north-1.amazonaws.com/prod/quiz'; // Update with your actual API URL
+    <section>
+        <h2>Get a Quiz</h2>
+        <input type="text" id="quizId" placeholder="Enter Quiz ID">
+        <button onclick="getQuiz()">Get Quiz</button>
+        <div id="quizDetails"></div>
+    </section>
 
-        function fetchQuizzes() {
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const quizList = document.getElementById('quizList');
-                    const deleteDropdown = document.getElementById('deleteDropdown');
-                    quizList.innerHTML = '';
-                    deleteDropdown.innerHTML = '';
-                    data.forEach(quiz => {
-                        const li = document.createElement('li');
-                        li.textContent = `ID: ${quiz_id}, Title: ${quiz.title}`;
+    
+</div>
 
-                        const option = document.createElement('option');
-                        option.value = quiz.quiz_id;
-                        option.textContent = `ID: ${quiz_id}, Title: ${quiz.title}`;
-                        deleteDropdown.appendChild(option);
+<script>
+    const apiBaseURL = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod';
 
-                        quizList.appendChild(li); // Display in available quizzes
-                    });
-                })
-                .catch(error => console.error('Error fetching quizzes:', error));
+    // Function to dynamically add another question
+    function addQuestion() {
+        const questionsContainer = document.getElementById('questions-container');
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('question');
+        
+        questionDiv.innerHTML = `
+            <input type="text" class="question_text" placeholder="Enter Question Text" required>
+            <input type="text" class="option" placeholder="Option 1" required>
+            <input type="text" class="option" placeholder="Option 2" required>
+            <input type="text" class="option" placeholder="Option 3" required>
+            <input type="text" class="option" placeholder="Option 4" required>
+            <input type="text" class="correct_option" placeholder="Enter Correct Option" required>
+        `;
+        
+        questionsContainer.appendChild(questionDiv);
+    }
+
+    // Function to create a quiz with questions
+    function createQuiz() {
+        const quizData = {
+            PK: `QUIZ#${document.getElementById('quiz_id').value}`,  // Quiz identifier
+            SK: "META",  // Static metadata identifier for quiz
+            teacher_id: document.getElementById('teacher_id').value,
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            questions: []
+        };
+
+        const questions = document.querySelectorAll('#questions-container .question');
+        questions.forEach((question, index) => {
+            const questionText = question.querySelector('.question_text').value;
+            const options = Array.from(question.querySelectorAll('.option')).map(option => option.value);
+            const correctOption = question.querySelector('.correct_option').value;
+            
+            quizData.questions.push({
+                SK: `QUESTION#${index + 1}`,
+                question_text: questionText,
+                options: options,
+                correct_option: correctOption,
+                created_at: new Date().toISOString()
+            });
+        });
+
+        fetch(`${apiBaseURL}/quiz`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('message').textContent = data.success 
+                ? 'Quiz and questions created successfully!' 
+                : `Failed to create quiz: ${data.message}`;
+            listQuizzes();
+        })
+        .catch(error => {
+            document.getElementById('message').textContent = `Error: ${error.message}`;
+        });
+    }
+
+    // Function to list all quizzes
+    function listQuizzes() {
+        fetch(`${apiBaseURL}/quiz`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const quizList = document.getElementById('quizList');
+            quizList.innerHTML = '';
+
+            data.forEach(quiz => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <strong>Quiz Title:</strong> ${quiz.title}<br>
+                    <strong>Created At:</strong> ${quiz.created_at}<br>
+                    <strong>Quiz ID:</strong> ${quiz.PK}
+                    <button onclick="deleteQuiz('${quiz.PK}')" class="delete-button">Delete Quiz</button>
+                `;
+                quizList.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error fetching quizzes:', error));
+    }
+
+     // Function to get a quiz by its ID
+     function getQuiz() {
+            const quizId = document.getElementById('quizId').value; // Get the quiz ID from input
+
+            // Validate the quizId parameter
+            if (!quizId) {
+                console.error('Quiz ID is required');
+                document.getElementById('quizDetails').innerHTML = '<p style="color: red;">Quiz ID is required.</p>';
+                return;
+            }
+
+            // Fetch the quiz data from the API
+            fetch(`${apiBaseURL}/quiz/${quizId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Parse the JSON response
+            })
+            .then(data => {
+                console.log('Fetched Quiz:', data); // Log the fetched quiz data
+                displayQuiz(data); // Display the quiz details
+            })
+            .catch(error => {
+                console.error('Error fetching quiz:', error);
+                document.getElementById('quizDetails').innerHTML = '<p style="color: red;">Error fetching quiz.</p>';
+            });
         }
-    function addQuiz() {    
-    const quizData = {
-        quiz_id: document.getElementById('quiz_id').value,
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        teacher_id: document.getElementById('teacher_id').value,
-        teacher_name: document.getElementById('teacher_name').value,
-    };
 
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(quizData)
-    })
-    .then(response => response.json())  // Convert response to JSON
-    .then(data => {
-        if (data && data.success) {  // Check if the response has a success indicator
-            showMessage(`Quiz "${quizData.title}" successfully added in QuizBS!`); // Show success message with the title
-            fetchQuizzes(); // Refresh the list
-        } else {
-            showMessage(`Failed to add quiz: ${data.message || 'Unknown error'}`, false); // Show failure message
-        }
-    })
-    .catch(error => {
-        showMessage(`Error adding quiz: ${error.message}`, false); // Show error message
-        console.error('Error adding quiz:', error);
-    });
-}
+        // Function to display the fetched quiz details on the page
+        function displayQuiz(quiz) {
+            const quizDetails = document.getElementById('quizDetails'); // Container for quiz details
+            quizDetails.innerHTML = ''; // Clear previous content
 
-function showMessage(message, isSuccess = true) {
-    const messageDiv = document.getElementById('message');
-    messageDiv.textContent = message;
-    messageDiv.style.color = isSuccess ? 'green' : 'red'; // Change text color based on success or failure
-}
+            if (quiz) {
+                const title = document.createElement('h3');
+                title.textContent = quiz.title || 'N/A';
+                quizDetails.appendChild(title);
 
+                const createdAt = document.createElement('p');
+                createdAt.textContent = `Created At: ${quiz.created_at || 'N/A'}`;
+                quizDetails.appendChild(createdAt);
 
-        function deleteSelectedQuiz() {
-            const deleteDropdown = document.getElementById('deleteDropdown');
-            const quizId = deleteDropdown.value;
-            if (quizId && confirm(`Are you sure you want to delete Quiz ID: ${quizId}?`)) {
-                fetch(`${apiUrl}/${quizId}`, { method: 'DELETE' })
-                    .then(response => {
-                        if (response.ok) {
-                            alert(`Quiz ID: ${quizId} is deleted.`);
-                            fetchQuizzes(); // Refresh the list
-                        } else {
-                            throw new Error('Failed to delete quiz');
-                        }
-                    })
-                    .catch(error => {
-                        alert(error.message);
-                        console.error('Error deleting quiz:', error);
+                // Display associated questions if they exist
+                if (quiz.questions && quiz.questions.length > 0) {
+                    const questionList = document.createElement('ul');
+                    quiz.questions.forEach(question => {
+                        const questionItem = document.createElement('li');
+                        questionItem.textContent = question.text; // Adjust this if your question object has a different structure
+                        questionList.appendChild(questionItem);
                     });
+                    quizDetails.appendChild(questionList);
+                } else {
+                    const noQuestions = document.createElement('p');
+                    noQuestions.textContent = 'No questions available for this quiz.';
+                    quizDetails.appendChild(noQuestions);
+                }
+            } else {
+                quizDetails.textContent = 'Quiz not found';
             }
         }
-        const cors = require('cors');
-app.use(cors()); // Use this before your routes are set up
 
-    </script>
+        // Call the listQuizzes function on page load
+        document.addEventListener('DOMContentLoaded', listQuizzes);
+
+
+        function deleteQuiz(quizId) {
+        if (!confirm(`Are you sure you want to delete Quiz ID: ${quizId}?`)) {
+            return;
+        }
+
+        fetch(`${apiBaseURL}/quiz/${quizId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.statusCode === 200) {
+                alert(`Quiz ${quizId} deleted successfully!`);
+                listQuizzes();  // Refresh the quiz list after deletion
+            } else {
+                alert(`Failed to delete quiz: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting quiz:', error);
+            alert(`Error deleting quiz: ${error.message}`);
+        });
+    }
+</script>
+
 </body>
 </html>
