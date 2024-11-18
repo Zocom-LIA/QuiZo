@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Profiles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+
+        body {
+            
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            background-image: url(multi.jpg);
+            font-family: 'corbel', sans-serif;
+        }
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+       
+
+        .profile-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Profile Card Styles */
+        .profile-card {
+            background-image: url(multi.jpg);
+            border-radius: 20px;
+            width: 250px;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px) scale(1.60);
+            box-shadow: 0 8px 16px rgba(4, 45, 107, 0.979);
+        }
+
+        .profile-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(57, 57, 61, 0.473), rgba(10, 57, 138, 0.3));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 15px;
+            z-index: 0;
+        }
+
+        .profile-card:hover::before {
+            opacity: 1;
+        }
+
+        .profile-card h2, .profile-card p, .profile-link {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            transition: transform 0.4s ease;
+        }
+
+        .profile-card:hover .profile-img {
+            transform: rotate(10deg) scale(1.2);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #3004048e;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 1em;
+            color: #611010e7;
+            margin-bottom: 15px;
+        }
+
+        .profile-link {
+            color: #4d525ad5;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .profile-link:hover {
+            color: #bbb5c2;
+            text-decoration: underline;
+        }
+
+        /* Add an icon to LinkedIn link */
+        .profile-link::before {
+            content: "\f0e1";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            margin-right: 5px;
+        }
+
+        /* Homepage Button Styles */
+        .homepage-button {
+            margin-top: 5px;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(135deg, #201f20, #2575fc);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .homepage-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            transition: all 0.4s ease;
+        }
+
+        .homepage-button:hover::before {
+            left: 100%;
+        }
+
+        .homepage-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(61, 80, 109, 0.5);
+        }
+    .profile-links {
+        display: inline-flex;
+    }
+
+    .profile-link {
+        margin-right: 10px;
+        text-decoration: none;
+        color: #1a1c1f;
+    }
+
+    .profile-link:last-child {
+        margin-right: 0;
+    }
+
+    .custom-square-img {
+        width: 60px; /* Set the width as needed */
+        height: 60px; /* Set the height to make it a square */
+        object-fit: cover; /* Ensures the image scales and crops to fit the square */
+        border-radius: 0; /* Ensures no rounded corners */
+        border: 2px solid #1489e9; /* Optional: add a border for styling */
+    }
+
+    </style>
+</head>
+ 
+<body>
+    
+    <br><br><br><br><br><br><br><br><br>
+
+    <div class="profile-container">
+        
+        
+        <div class="profile-card">
+            <img src="team.jpeg" alt="David" class="profile-img">
+            <h2>David</h2>
+            <p>Prodcut Owner Supervisor</p><br><br>
+            <a href="#" class="profile-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+
+        <div class="profile-card">
+            <img src="team.jpeg" alt="Elmira" class="profile-img">
+            <h2>Elmira</h2>
+            <p>Software Developer AWS SAM Python</p><br><br>
+            <a href="#" class="profile-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+
+        <div class="profile-card">
+            <img src="team.jpeg" alt="Eirini" class="profile-img">
+            <h2>Eirini</h2>
+            <p>Software Developer AWS SAM Python</p><br><br>
+            <a href="#" class="profile-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+
+        <div class="profile-card">
+            <img src="team.jpeg" alt="Vaishali" class="profile-img">
+            <h2>Vaishali</h2>
+            <p>Software Developer AWS SAM Python</p><br><br>
+            <a href="#" class="profile-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+
+        <div class="profile-card">
+            <img src="team.jpeg" alt="Swetha" class="profile-img">
+            <h2>Swetha</h2>
+            <p>Software Developer AWS SAM Python</p><br><br>
+            <a href="#" class="profile-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+
+        <div class="profile-card">
+            <img src="team.jpeg" alt="Ajmal" class="profile-img">
+            <h2>Ajmal</h2>
+            <p>System Developer IT Security Analyst</p><br><br>
+            <!-- 
+<img src="quizo.jpeg" alt="Ajmal" class="custom-square-img"><br><br> 
+-->
+            <a href="#" class="profile-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+
+
+</body>
+</html>

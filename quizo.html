@@ -9,6 +9,8 @@
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
     <style>
         body {
@@ -19,20 +21,20 @@
             background-repeat: no-repeat;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(45deg, #1991c9e0, #004085, #ce1010);
-
-            font-family: 'Arial', sans-serif;
+            background-image: url(multi.jpg);
+            
+            font-family: 'corbel', sans-serif;
         }
         .container {
-    padding: 50px;
-    margin-top: 45px;
-    border-radius: 50px;
-    background: linear-gradient(45deg, #1991c9e0, #004085, #ce1010);
-    box-shadow: 0 4px 8px rgba(25, 191, 69, 0.8);
-    border: 2px solid rgba(255, 255, 255, 0.5); /* Example of a semi-transparent white border */
-}
-
+            padding: 50px;
+            margin-top: 45px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #3ec7d6ef, #1c698aea, #141516e5);
+            box-shadow: 0 4px 8px rgba(2, 119, 33, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.5); /* Example of a semi-transparent white border */
     
+        }
+
         .navbar {
             background: transparent;
             border: none;
@@ -42,6 +44,7 @@
             color: #c9cfbd;
             transition: color 0.3s ease-in-out;
             font-weight: bolder;
+            
         }
         .navbar-light .navbar-nav .nav-link:hover,
         .navbar-light .navbar-nav .nav-link.active {
@@ -55,85 +58,26 @@
         }
    
 
-/* Keyframes for fade-in effect */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -60%); /* Start slightly higher */
+    .text-container h1 {
+        font-size: 3.0rem; /* 40px if the base size is 16px */
+        color: #ece5e5; /* Slightly darker than the text color for emphasis */
+        margin-top: 0;
+        margin-bottom: em; /* Spacing below the heading */
     }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
+
+    .text-container h2 {
+        font-size: 1.5rem; /* 32px if the base size is 16px */
+        color: #b4e011b7;
+        margin-top: 0.5em; /* Ensures space above the h2 if it follows other content */
+        margin-bottom: 1em; 
     }
-}
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: bolder;
-        }
-        p {
-            font-size: 0.8rem;
-        }
-        .footer {
-            
-            color: #b4c045;
-            padding: 40px 0;
-            font-size: 14px;
-        }
-        .footer a {
-            color: #fff;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
-        .footer .column {
-            margin-bottom: 20px;
-        }
-        .footer .social-icons a {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-        .footer .fa-facebook { color: #a0a8bb; }
-        .footer .fa-linkedin { color: #c0d6e2; }
-        .footer .fa-instagram { color: #e4405f; }
-        .footer .fa-tiktok { color: #000000; }
-        .footer .fa-discord { color: #bbb7b7; }
-        .footer .fa-youtube { color: #e70d0d; }
-        @media (max-width: 991px) {
-            .navbar-nav {
-                text-align: center;
-                flex-direction: row;
-            }
-        }
-        
-    
-
-
-.text-container h1 {
-    font-size: 2.5rem; /* 40px if the base size is 16px */
-    color: #ece5e5; /* Slightly darker than the text color for emphasis */
-    margin-top: 0;
-    margin-bottom: 0.5em; /* Spacing below the heading */
-}
-
-.text-container h2 {
-    font-size: 1.2rem; /* 32px if the base size is 16px */
-    color: #a6d10cb7;
-    margin-top: 0.5em; /* Ensures space above the h2 if it follows other content */
-    margin-bottom: 1em;
-}
-
-.text-container p {
-    font-size: 1rem; /* 16px, which is typically the browser default */
-    line-height: 1.6; /* Enhances readability */
-    margin-top: 0;
-    margin-bottom: 1em; /* Standard paragraph spacing */
-}
+    .text-container p {
+        font-size: rem; /* 16px, which is typically the browser default */
+        line-height: 1.6; /* Enhances readability */
+        margin-top: 0;
+        margin-bottom: em; /* Standard paragraph spacing */
+    }   
 
 .text-container a {
     color: #273747; /* Sets a standard, readable link color */
@@ -146,14 +90,15 @@
 }
 
     .text-container .btn {
-    margin-top: 25px; /* Space above the button */
-    padding: 10px 25px; /* Larger clickable area */
-    font-size: 1em; /* Matching font size */
+    margin-top: 2px; /* Space above the button */
+    padding: 25px 30px; /* Larger clickable area */
+    font-size: 1.2em; /* Matching font size */
     border-radius: 5px; /* Rounded corners */
-    background: #c2d2e2; /* Dark blue background */
+    background: #dce8ebd3; /* Dark blue background */
     border: none; /* No border */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    box-shadow: 0 2px 5px rgba(14, 13, 13, 0.842); /* Subtle shadow for depth */
     transition: background-color 0.3s ease-in-out; /* Smooth transition for hover */
+    
 }
 
 .text-container .btn:hover {
@@ -193,6 +138,188 @@
 /* Remove pipes '|' after links if not stylistically needed */
 
 
+/* General Footer Styling */
+.footer {
+    
+    padding: 50px 20px;
+    color: #ffffff;
+    font-family: 'corbel', sans-serif;
+    
+}
+
+.footer h5 {
+    font-size: 1.2rem;
+    color: #f5ba02;
+    text-transform: none;
+    font-weight: bold;
+    margin-bottom: 20px;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.footer h5:hover {
+    color: #ffffff;
+}
+
+.footer .card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 30px 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.footer .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+.footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer ul li {
+    margin-bottom: 10px;
+}
+
+.footer a {
+    color: #bfbfbf;
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: inline-block;
+    position: relative;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer a:hover {
+    color: #f5ba02;
+    transform: translateX(5px);
+}
+
+/* Hover underline animation */
+.footer a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #f5ba02;
+    transition: width 0.3s;
+}
+
+.footer a:hover::after {
+    width: 100%;
+}
+
+
+/* Footer Bottom Text */
+.footer .text-center {
+    margin-top: 30px;
+    color: #bfbfbf;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.footer h5 {
+    font-size: 1.5rem;
+    color: #a6d10cb7;
+    margin-top: 0em;
+    margin-bottom: 1em;
+    display: flex;
+    align-items: center;
+    gap: .5em; /* Space between icon and text */
+}
+
+.footer h5 .icon {
+    font-size: 1.2rem; /* Adjust icon size */
+    color: #a6d10cb7;
+    transition: color 0.3s ease;
+    
+}
+
+.footer h5:hover .icon {
+    color: #0ccdd1; /* Change icon color on hover */
+}
+.footer-text {
+    font-size: 1rem;
+    color: #b4b6af;
+    transition: color 0.3s ease;
+}
+
+.footer-text:hover {
+    color: #f5ba02;
+}
+
+.social-icons p {
+    color: #f5ba02;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.2rem;
+    animation: colorCycle 3s linear infinite;
+    background: linear-gradient(45deg, #f5ba02, #e63946, #4ea8de, #14b8a6);
+    
+    display: inline-block;
+    padding: 0.2rem;
+}
+
+/* Pulsating and color-cycling hover effect on icons */
+.social-icons a {
+    color: #ffffff69;
+    font-size: 2.5rem;
+    margin: 0 10px;
+    transition: color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+
+.social-icons a:hover {
+    color: #d44006dc;
+    transform: scale(1);
+    
+}
+
+.social-icons a::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.5s ease;
+    opacity: 0.8;
+    z-index: -1;
+}
+
+.social-icons a:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer .card {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .social-icons {
+        text-align: center;
+    }
+}
+
+/* Keyframes for color cycling on text */
+@keyframes colorCycle {
+    0% { color: #f5ba02; }
+    25% { color: #e63946; }
+    50% { color: #4ea8de; }
+    75% { color: #14b8a6; }
+    100% { color: #f5ba02; }
+}
+
+
+
 
     </style>
     
@@ -201,102 +328,102 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light bg-custom">
             <div class="container-fluid">
-                <a class="navbar-brand mx-auto" href="#"><i class="fas fa-bug"></i> QuiZo</a>
+                <a class="navbar-brand mx-auto" href="#"><i class="fas fa-bug"></i> QUIZO</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a class="nav-link active" href="#"><i class="fas fa-info-circle"></i> About </a>
-                        <a class="nav-link" href="#"><i class="fas fa-box-open"></i> Mission |</a>
+                        <a class="nav-link active" href="#"><i class="fas fa-info-circle"></i><br><br> About </a>
+                        <a class="nav-link" href="#"><i class="fas fa-box-open"></i> <br>Mission</a>
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="teamDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-users"></i> Team: BugSquashers |
+                            
+                                <a class="nav-link" href="team.html"><i class="fas fa-sign-in-alt"></i><br>Team</a>
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="teamDropdown">
-                                <li><a class="dropdown-item" href="#">David</a></li>
-                                <li><a class="dropdown-item" href="#">Eirini</a></li>
-                                <li><a class="dropdown-item" href="#">Vaishali</a></li>
-                                <li><a class="dropdown-item" href="#">Elmira</a></li>
-                                <li><a class="dropdown-item" href="#">Swetha</a></li>
-                                <li><a class="dropdown-item" href="#">Ajmal</a></li>
-                            </ul>
                         </div>
-                        <a class="nav-link" href="demotest.html"><i class="fas fa-vial"></i> Demo Test |</a>
-                        <a class="nav-link" href="register.html"><i class="fas fa-sign-in-alt"></i>     Register |</a>
+                        <a class="nav-link" href="demotest.html"><i class="fas fa-vial"></i><br>Demo Test</a>
+                        <a class="nav-link" href="register.html"><i class="fas fa-sign-in-alt"></i><br>Register</a>
+                       
                     </div>
                 </div>
             </div>
         </nav>
-        <br><br><br><br><br>
-        
+        <br>
+        <br><br>
         <div class="text-container">
             <h1>Test Your TesTing Adventure!</h1>
-            <p><h2>Discover interactive quiz app for technology to cover latest trends for skill enhancement</p></h2>
             <a href="teacher-sign-in.html" " class="btn btn-primary">
-                <i class="fas fa-chalkboard-teacher"></i> <br>Sign In as Teacher
+                <i class="fas fa-chalkboard-teacher"></i> <br>Make Quiz
+                
             </a>
             <a href="student-sign-in.html" class="btn btn-primary">
-                <i class="fas fa-user-graduate"></i> <br>Sign In as Student
+                <i class="fas fa-user-graduate"></i> <br>Start Quiz
+                
             </a>
-         
-            <br><br><br><br>
+            <br><br>
+            
+            
             <div class="footer">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-3 column">
-                            <h5>About</h5>
-                            <ul class="list-unstyled">
-                                <li><a href="#">Company</a></li>
-                                <li><a href="#">Leadership</a></li>
-                                <li><a href="#">Careers</a></li>
-                                <li><a href="#">Contact us</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3 column">
-                            <h5>Solutions</h5>
-                            <ul class="list-unstyled">
-                                <li><a href="#">At home</a></li>
-                                <li><a href="#">At school</a></li>
-                                <li><a href="#">At work</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3 column">
-                            <h5>Resources</h5>
-                            <ul class="list-unstyled">
-                                <li><a href="#">Coursera</a></li>
-                                <li><a href="#">Blog</a></li>
-                                <li><a href="#">Webinars</a></li>
-                                <li><a href="#">YouTube</a></li>
-                                <li><a href="#">Help Center</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3 column">
-                            <h5>Terms and Conditions</h5>
-                            <ul class="list-unstyled">
-                                <li><a href="#">Terms and conditions</a></li>
-                                <li><a href="#">Privacy policy</a></li>
-                                <li><a href="#">Cookie notice</a></li>
-                                <li><a href="#">GDPR - Regulation (EU) 2016/679</a></li>
-                                <li><a href="#">NIS2 Directive EU</a></li>
-                            </ul>
-                        </div>
+                <div class="row">
+                    <!-- About Section -->
+                    <div class="col-md-3 column card">
+                        <h5><i class="fas fa-info-circle icon"><br><br></i><br> About</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Company</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Contact us</a></li>
+                        </ul>
                     </div>
+            
+                    <!-- Solutions Section -->
+                    <div class="col-md-3 column card">
+                        <h5><i class="fas fa-lightbulb icon"><br><br></i> <br>Solutions</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">At home</a></li>
+                            <li><a href="#">At school</a></li>
+                            <li><a href="#">At work</a></li>
+                        </ul>
+                    </div>
+            
+                    <!-- Resources Section -->
+                    <div class="col-md-3 column card">
+                        <h5><i class="fas fa-book icon"><br><br></i> <br>Resources</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Coursera</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Webinars</a></li>
+                        </ul>
+                    </div>
+            
+                    <!-- Terms and Conditions Section -->
+                    <div class="col-md-3 column card">
+                        <h5><i class="fas fa-file-contract icon"><br><br><br></i> <br>Regulation</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Cookie notice</a></li>
+                            <li><a href="#">GDPR 2016 (EU)</a></li>
+                            <li><a href="#">NIS2 Directive (EU)</a></li>  
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
                     <div class="row social-icons">
                         <div class="col-md-12">
-                            <p>External resources</p>
-                            <a href="#"><i class="fab fa-facebook"></i></a>
+                           
+                           <center> <a href="#"><i class="fab fa-facebook"></i></a>
                             <a href="#"><i class="fab fa-linkedin"></i></a>
                             <a href="#"><i class="fab fa-instagram"></i></a>
                             <a href="#"><i class="fab fa-tiktok"></i></a>
                             <a href="#"><i class="fab fa-discord"></i></a>
-                            <a href="#"><i class="fab fa-youtube"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a></center>
                         </div>
                     </div>
+                    
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <!-- Dynamic year and copyright statement -->
-                            <p>&copy; <script>document.write(new Date().getFullYear());</script> BugSquashers. All rights reserved.</p>
+                            <p class="footer-text">&copy; <script>document.write(new Date().getFullYear());</script> BugSquashers. No Rights Reserved.</p>
+                        </div>
+                        
                         </div>
                     </div>
                 </div>

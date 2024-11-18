@@ -56,7 +56,7 @@
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(120deg, #4b6f74, #80DEEA, #2c474b);
-            color: #333;
+            color: #181616;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -70,9 +70,6 @@
             margin-bottom: 1.5rem;
             animation: fadeIn 1s ease-out;
             text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-        }
-        h2 {
-            font-size: 1.8rem;
         }
         
         @keyframes fadeIn {
@@ -119,13 +116,33 @@
             transform: scale(1.05);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            background: var(--card-background);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            background-color: #FFFFFF(232, 238, 201);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
+    <button onclick="window.location.href='quizo.html';">Go to homepage</button>
+    <br><br>
+    <h1>QUIZO-STUDENT DASHBOARD</h1>
+   
     <div class="container">
         <section>
-            <button onclick="window.location.href='quizo.html';">Go to homepage</button>
-            <br><br><br>
             <h2>Select User</h2>
             <select id="userSelect">
                 <option value="" disabled selected>Select a user</option>
@@ -134,21 +151,23 @@
             <button id="startQuiz" onclick="startQuiz()">Start Quiz</button>
             <br><br>
         </section>
-        
-        <h1 id="quizTitle">Quiz Title Here</h1>
+    </div>
+    <div class="container">
+        <h2 id="quizTitle">Quiz Title Here</h2>
         <div id="quizDescription" class="success">
             <p>Quiz Description</p>
         </div>
-
+        
+        <div id="errorMessage" class="error"></div>
         <div id="quizQuestions"></div>
         
         <button id="submitQuiz" onclick="submitQuiz()" disabled>Submit Quiz</button>
         <br><br>
-        <button onclick="window.location.href='student-sign-in.html';">Go back to student's portal</button>
-        
         <div id="quizResult" class="success"></div>
-        <div id="errorMessage" class="error"></div>
+        
     </div>
+    <button onclick="window.location.href='student-sign-in.html';">Choose another quiz</button>
+        
 
     <script>
         const apiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
@@ -254,7 +273,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data === 'Quiz started successfully') {
-                    document.getElementById('quizResult').textContent = 'Quiz started successfully!';
+                    //document.getElementById('quizResult').textContent = 'Quiz started successfully!';
                     document.getElementById('startQuiz').style.display = 'none'; // Hide the Start Quiz button
                     document.getElementById('submitQuiz').disabled = false; // Enable Submit Quiz button
                     document.getElementById('quizQuestions').style.display = 'block'; // Show quiz questions
@@ -271,6 +290,7 @@
             const resultDiv = document.getElementById('quizResult');
             const questions = document.querySelectorAll('.question');
             let score = 0;
+        
             // Calculate score
             questions.forEach(questionDiv => {
                 const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
@@ -282,6 +302,14 @@
             });
         
             resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
+        
+            // Lock radio buttons by disabling them
+            questions.forEach(questionDiv => {
+                const radioButtons = questionDiv.querySelectorAll('input[type="radio"]');
+                radioButtons.forEach(radio => {
+                    radio.disabled = true; // Disable all radio buttons
+                });
+            });
         
             // Prepare data for submission
             const submitData = {
@@ -310,6 +338,7 @@
                 document.getElementById('errorMessage').textContent = 'Error submitting quiz: ' + error.message;
             });
         }
+        
         
         function calculateTimeTaken() {
             const startTime = new Date(localStorage.getItem('quizStartTime'));

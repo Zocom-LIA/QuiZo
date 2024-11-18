@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz & Question Manager</title>
+    <title>QuiZo | Advanced Quiz Builder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
     <style>
-        /* Root styles and reset */
         :root {
-            --primary-color: #4A90E2;
+            --primary-color: #6d7e90;
             --secondary-color: #7ED321;
             --tertiary-color: #F5A623;
             --danger-color: #E74C3C;
             --background-color: #F0F3F7;
             --card-background: #FFFFFF;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --card-radius: 12px;
+            --card-radius: 10px;
             --font-family: 'Arial', sans-serif;
         }
         * {
@@ -28,198 +25,157 @@
         body {
             background: linear-gradient(45deg, #1991c9e0, #004085, #ce1010);
             color: #333;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            min-height: 100vh;
             padding: 20px;
-        }
-        h1 {
-            font-size: 2.2rem;
-            color: #FFFFFF;
-            margin-bottom: 1.5rem;
-            animation: fadeIn 1s ease-out;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
         }
         .container {
-            max-width: 600px;
             width: 100%;
-            padding: 20px;
+            max-width: 800px;
             background: var(--card-background);
             border-radius: var(--card-radius);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-            animation: slideIn 0.8s ease-out;
-            position: relative;
+            overflow: hidden;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            background: var(--primary-color);
+            padding: 15px;
+        }
+        .tabs button {
+            flex: 1;
+            border: none;
+            background: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 15px;
+            transition: background 0.3s ease;
+        }
+        .tabs button:hover,
+        .tabs button.active {
+            background: var(--tertiary-color);
+        }
+        .content {
+            display: none;
+            padding: 20px;
+        }
+        .content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .quiz-select label, .question-form label {
+        label {
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin: 10px 0;
             display: block;
             color: var(--primary-color);
         }
-        select, input, textarea {
+        input, textarea, select, button {
             width: 100%;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
+            margin: 10px 0;
+            padding: 10px;
             border-radius: var(--card-radius);
             border: 1px solid #ccc;
-            transition: box-shadow 0.3s, transform 0.2s;
-        }
-        select:hover, input:hover, textarea:hover {
-            box-shadow: 0 0 10px var(--secondary-color);
-            transform: scale(1.02);
-        }
-        select:focus, input:focus, textarea:focus {
-            box-shadow: 0 0 10px var(--primary-color);
-            border-color: var(--primary-color);
-            outline: none;
         }
         button {
-            padding: 0.75rem 1.5rem;
-            font-weight: bold;
-            color: white;
             background: var(--primary-color);
-            border: none;
-            border-radius: var(--card-radius);
+            color: white;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: all 0.3s ease;
         }
         button:hover {
-            background-color: var(--tertiary-color);
+            background: var(--secondary-color);
             transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        .question-box {
+            background: var(--card-background);
+            border-radius: var(--card-radius);
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease;
         }
         .delete-button {
-            background-color: var(--danger-color);
             position: absolute;
             top: 10px;
             right: 10px;
-            padding: 0.4rem 0.8rem;
+            background: var(--danger-color);
             color: white;
             border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        .delete-button:hover {
-            background-color: #c0392b;
-        }
-        .questions-container h2, .delete-quiz h2, .create-quiz h2 {
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .question-box {
-            background-color: var(--card-background);
+            padding: 5px 10px;
             border-radius: var(--card-radius);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            position: relative;
-            animation: fadeIn 0.5s ease;
-            transition: transform 0.3s;
-        }
-        .question-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
-
-    <h1><i class="fas fa-tachometer-alt"></i> QuiZo | Quiz Builder</h1>
-    <button onclick="window.location.href='quizo.html';">
-        <i class="fas fa-home"></i> Home Page
-    </button>
-    <br>
-    <!-- Create Quiz Section -->
-    <div class="container create-quiz">
-        <h2><i class="fas fa-plus-circle"></i> Create a New Quiz</h2>
-        <p>Please add the data as required in the text box.</p><br>
-        <label for="quiz_id">Quiz ID *</label>
-        <input type="text" id="quiz_id" placeholder="Enter Quiz ID" required>
-
-        <label for="title">Quiz Title *</label>
-        <input type="text" id="title" placeholder="Enter Quiz Title" required>
-
-        <label for="description">Quiz Description</label>
-        <textarea id="description" placeholder="Enter Quiz Description" rows="2" required></textarea>
-
-        <label for="teacher_id">Teacher ID *</label>
-        <input type="text" id="teacher_id" placeholder="Enter Teacher ID" required>
-
-        <button onclick="createQuiz()">
-            <i class="fas fa-plus-circle"></i> Create Quiz
-        </button>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('createQuiz')">Create Quiz</button>
+            <button class="tab-button" onclick="showTab('addQuestion')">Add Question</button>
+            <button class="tab-button" onclick="showTab('viewQuestions')">View Questions</button>
+            <button class="tab-button" onclick="showTab('deleteQuiz')">Delete Quiz</button>
+        </div>
+        <div id="createQuiz" class="content active">
+            <h2>Create Quiz</h2>
+            <label for="quiz_id">Quiz ID *</label>
+            <input type="text" id="quiz_id" placeholder="Enter Quiz ID">
+            <label for="title">Quiz Title *</label>
+            <input type="text" id="title" placeholder="Enter Quiz Title">
+            <label for="description">Quiz Description</label>
+            <textarea id="description" placeholder="Enter Quiz Description"></textarea>
+            <label for="teacher_id">Teacher ID *</label>
+            <input type="text" id="teacher_id" placeholder="Enter Teacher ID">
+            <button onclick="createQuiz()">Create Quiz</button>
+        </div>
+        <div id="addQuestion" class="content">
+            <h2>Add Question</h2>
+            <label for="quizSelectForAdd">Select Quiz *</label>
+            <select id="quizSelectForAdd"></select>
+            <label for="question_text">Question Text</label>
+            <textarea id="question_text" placeholder="Enter Question Text"></textarea>
+            <label for="option1">Option 1</label>
+            <input type="text" id="option1" placeholder="Option 1">
+            <label for="option2">Option 2</label>
+            <input type="text" id="option2" placeholder="Option 2">
+            <label for="option3">Option 3</label>
+            <input type="text" id="option3" placeholder="Option 3">
+            <label for="option4">Option 4</label>
+            <input type="text" id="option4" placeholder="Option 4">
+            <label for="correct_option">Correct Option</label>
+            <input type="text" id="correct_option" placeholder="Correct Option">
+            <button onclick="addQuestion()">Add Question</button>
+        </div>
+        <div id="viewQuestions" class="content">
+            <h2>View Questions</h2>
+            <label for="quizSelect">Select Quiz</label>
+            <select id="quizSelect" onchange="loadQuestions()"></select>
+            <div id="questionsList"></div>
+        </div>
+        <div id="deleteQuiz" class="content">
+            <h2>Delete Quiz</h2>
+            <label for="deleteQuizSelect">Select Quiz</label>
+            <select id="deleteQuizSelect"></select>
+            <button onclick="deleteQuiz()">Delete Quiz</button>
+        </div>
     </div>
-
-    <!-- Existing functionality for quiz and question management below -->
-
-    <div class="container quiz-select">
-        <h2><i class="fas fa-tasks"></i> Select Quiz</h2>
-        <p>Please! Select a quiz for Add questions</p>
-        <select id="quizSelect" onchange="loadQuestions()">
-            <option value="">-- Select a Quiz --</option>
-        </select>
-    </div>
-
-    <div class="container question-form" id="questionForm" style="display: none;">
-        <h2><i class="fas fa-question-circle"></i> Add Question</h2>
-        <p>Please use the same form for adding new question.</p><br>
-        <label for="question_text">Question Text</label>
-        <textarea id="question_text" rows="3" required></textarea>
-
-        <label for="option1">Option 1</label>
-        <input type="text" id="option1" required>
-
-        <label for="option2">Option 2</label>
-        <input type="text" id="option2" required>
-
-        <label for="option3">Option 3</label>
-        <input type="text" id="option3" required>
-
-        <label for="option4">Option 4</label>
-        <input type="text" id="option4" required>
-
-        <label for="correct_option">Correct Option</label>
-        <input type="text" id="correct_option" required>
-
-        <button onclick="addQuestion()">
-            <i class="fas fa-question-circle"></i> Add Question
-        </button>
-    </div>
-
-    <div class="container questions-container" id="questions-container">
-        <h2><i class="fas fa-list"></i> Questions</h2>
-        <p>Here! You can Get and Delete the questions!</p>
-        <div id="questionsList"></div>
-    </div>
-
-    <!-- Delete Quiz Section -->
-    <div class="container delete-quiz">
-        <h2><i class="fas fa-trash-alt"></i> Delete a Quiz</h2>
-        <label for="deleteQuizSelect">Select Quiz to Delete</label>
-        <select id="deleteQuizSelect">
-            <option value="">-- Select a Quiz --</option>
-        </select>
-        <button onclick="deleteQuiz()">
-            <i class="fas fa-trash-alt"></i> Delete Quiz
-        </button>
-    </div>
-
     <script>
+        // Show Tab Function
+        function showTab(tabId) {
+            document.querySelectorAll('.content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
         const quizListUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
         const createQuizUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
         const quizDetailUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz/{quiz_id}';
