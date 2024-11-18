@@ -5,22 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Interface</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 90%;
-            margin: auto;
-            overflow: hidden;
-        }
-        input, button, select {
-            padding: 10px;
-            margin: 10px;
-            display: block;
-        }
-        select {
-            width: calc(100% - 22px);
-        }
+       
         .error {
             color: red;
             font-weight: bold;
@@ -29,15 +14,108 @@
             color: green;
             font-weight: bold;
         }
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #7ED321;
+            --tertiary-color: #F5A623;
+            --danger-color: #E74C3C;
+            --background-color: #F0F3F7;
+            --card-background: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --card-radius: 12px;
+            --font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #4b6f74, #80DEEA, #2c474b);
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 1s ease-out;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            background: var(--card-background);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .quiz-select label, .question-form label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--primary-color);
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            border-radius: var(--card-radius);
+            border: 1px solid #ccc;
+            transition: box-shadow 0.3s, transform 0.2s;
+        }
+        select:hover, input:hover, textarea:hover {
+            box-shadow: 0 0 10px var(--secondary-color);
+            transform: scale(1.02);
+        }
+        select:focus, input:focus, textarea:focus {
+            box-shadow: 0 0 10px var(--primary-color);
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            font-weight: bold;
+            color: white;
+            background: var(--primary-color);
+            border: none;
+            border-radius: var(--card-radius);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: var(--tertiary-color);
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+       
     </style>
 </head>
 <body>
-    
+    <h1>QQBS Student Dashboard</h1>
     <div class="container">
-        <h1>QuiZo' Student Dashboard</h1>
-        <button onclick="window.location.href='quizo.html';">Go to Main Homepage</button>
+        <button onclick="window.location.href='quizo.html';">Go to homepage</button>
         <br><br>
-
         <section>
             <h2>Select Quiz</h2>
             <select id="quizDropdown">
@@ -57,7 +135,7 @@
             fetch(apiUrl)
                 .then(response => {
                     console.log("Response status:", response.status); // Log status code
-                    console.log("Response headers:", response.headers); // Log headers
+                    console.log("Response headers:", response.headers);
         
                     if (!response.ok) {
                         return response.json().then(err => {
@@ -97,22 +175,17 @@
                 document.getElementById('startQuizResponse').textContent = 'Please select a quiz.'; // Display error if no quiz is selected
                 return;
             }
-
             // Extract the ID that comes after 'QUIZ#' if it exists
             const cleanedQuizId = quizId.split('QUIZ#')[1]; // Split the string by 'QUIZ#' and take the second part
-
             if (!cleanedQuizId) {
                 document.getElementById('startQuizResponse').textContent = 'Invalid quiz ID.'; // Handle case where split doesn't return an ID
                 return;
             }
-
             // Redirect to quiz content page with the cleaned ID
             window.location.href = `quizContent.html?quiz_id=${encodeURIComponent(cleanedQuizId)}`; // Use encodeURIComponent for safety
         }
-
         // Load quizzes when the page loads
         window.onload = fetchQuizzes;
     </script>
-    
 </body>
 </html>

@@ -17,8 +17,6 @@ def lambda_handler(event, context):
     # Route the requests based on method and path for QUIZ SECTION
     if path == "/quiz" and http_method == "POST":                        
         return create_quiz(event)
-    elif path == "/quiz" and http_method == "PUT":                   
-        return update_quiz(event)
     elif path == "/quiz" and http_method == "GET":                   
         return list_quizzes(event)
     elif path.startswith("/quiz/") and http_method == "GET":   
@@ -26,13 +24,11 @@ def lambda_handler(event, context):
     elif path.startswith("/quiz/") and http_method == "DELETE":      
         return delete_quiz(event)
     
-# Route the requests based on method and path for QUESTION SECTION
+   # Route the requests based on method and path for QUESTION SECTION
     elif path == "/question" and http_method == "POST":
         return add_question(event)
     elif path.startswith("/question/") and http_method == "GET":
         return get_question(event) 
-    elif path == "/question" and http_method=="PUT":
-        return update_question(event)
     elif path.startswith("/question/") and http_method == "DELETE":
         return delete_question(event)
     
@@ -321,11 +317,8 @@ def list_users(event):
     # Scan the table to get all users
     response = table.scan()
     users = response.get('Items', [])
-    
     # Extract user IDs
     user_ids = [user['user_id'] for user in users]  # List comprehension to get user IDs
-
-    # Return the response with user IDs
     return {
         'statusCode': 200,
         'body': json.dumps(user_ids)
@@ -335,18 +328,14 @@ def start_quiz(event):
     data = json.loads(event['body'])
     user_id = data['user_id']
     quiz_id = data['quiz_id']
-    
-    # Define the DynamoDB table for quizzes
     quiz_table = dynamodb.Table('QQBS')
-    
     # Check if the quiz exists
     response = quiz_table.get_item(
         Key={
-            'PK': quiz_id,  # Use the correct PK format for your quiz
-            'SK': 'META'    # Assuming SK for the metadata
+            'PK': quiz_id,
+            'SK': 'META'    
         }
     )
-    
     if 'Item' not in response:
         return {
             'statusCode': 404,
@@ -359,7 +348,6 @@ def start_quiz(event):
         'user_id': user_id,
         'quiz_id': quiz_id,
         'status': 'in progress',
-        'score': 0,
         'attempted_at': get_current_timestamp(),
         'submitted_at': '',
         'time_taken': 0
@@ -372,66 +360,45 @@ def start_quiz(event):
     }
 
 def submit_quiz(event):
-    logger.info("Starting submit_quiz function.")
-    
     try:
         # Parse incoming data
         data = json.loads(event['body'])
         user_id = data.get('user_id')
         quiz_id = data.get('quiz_id')
-        score = data.get('score')
-        time_taken = data.get('time_taken')
-        
-        # Log data for debugging
-        logger.info(f"Parsed Data - User ID: {user_id}, Quiz ID: {quiz_id}, Score: {score}, Time Taken: {time_taken}")
-        
-        if not all([user_id, quiz_id, score, time_taken]):
-            raise ValueError("One or more required fields are missing or null")
+        score = data.get('score', 0)  # Default to 0 if not provided
+        time_taken = data.get('time_taken', 0)  # Default to 0 if not provided
 
-        # Define the DynamoDB table for users
+        # Basic validation
+        if not user_id or not quiz_id:
+            return {
+                'statusCode': 400,
+                'body': json.dumps("Missing required fields: user_id or quiz_id")
+            }
+
+        # Update the user's quiz submission
         table = dynamodb.Table('UserBS')
-        
-        # Update user quiz submission details
-        response = table.update_item(
-            Key={
-                'user_id': user_id,
-                'quiz_id': quiz_id
-            },
-            UpdateExpression='SET #s = :status, #sc = :score, submitted_at = :submitted_at, time_taken = :time_taken',
+        table.update_item(
+            Key={'user_id': user_id, 'quiz_id': quiz_id},
+            UpdateExpression='SET #status = :status, #score = :score, submitted_at = :submitted_at, time_taken = :time_taken',
             ExpressionAttributeNames={
-                '#s': 'status',
-                '#sc': 'score'
+                '#status': 'status',
+                '#score': 'score'
             },
             ExpressionAttributeValues={
                 ':status': 'completed',
                 ':score': score,
                 ':submitted_at': get_current_timestamp(),
                 ':time_taken': time_taken
-            },
-            ReturnValues="UPDATED_NEW"
+            }
         )
-        
-        logger.info("DynamoDB update successful.")
+
         return {
             'statusCode': 200,
             'body': json.dumps('Quiz submitted successfully')
         }
-    
-    except ClientError as e:
-        logger.error(f"DynamoDB ClientError: {e.response['Error']['Message']}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps(f"DynamoDB error: {e.response['Error']['Message']}")
-        }
-    except ValueError as ve:
-        logger.error(f"Validation Error: {str(ve)}")
-        return {
-            'statusCode': 400,
-            'body': json.dumps(f"Bad request: {str(ve)}")
-        }
+
     except Exception as e:
-        logger.error(f"General Error: {str(e)}")
         return {
             'statusCode': 500,
-            'body': json.dumps(f'Internal server error: {str(e)}')
+            'body': json.dumps(f"Error submitting quiz: {str(e)}")
         }
