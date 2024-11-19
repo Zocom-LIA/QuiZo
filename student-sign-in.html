@@ -5,15 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Interface</title>
     <style>
-       
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: auto;                     /* Makes input take up full width */
+            margin-top: 0.5rem;              /* Space above input */
+            margin-bottom: 1rem;             /* Space below input */
+            border-radius: var(--card-radius); /* Rounded corners */
+            border: 1px solid #ccc;          /* Light gray border */
+            font-size: 1rem;                 /* Legible font size */
+            color: #585c5e;                     /* Text color */
+            background-color: #ffffff77;         
+            transition: box-shadow 0.3s, transform 0.2s; /* Smooth transitions for focus/hover */
+        }
+        .options {
+            margin-top: 10px;
+        }
+      
         .error {
             color: red;
             font-weight: bold;
         }
         .success {
-            color: green;
+            color: rgb(0, 30, 128);
             font-weight: bold;
         }
+        .loading {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        
         :root {
             --primary-color: #4A90E2;
             --secondary-color: #7ED321;
@@ -25,11 +49,11 @@
             --card-radius: 12px;
             --font-family: 'Arial', sans-serif;
         }
-        
+       
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(120deg, #4b6f74, #80DEEA, #2c474b);
-            color: #333;
+            color: #181616;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -37,30 +61,14 @@
             min-height: 100vh;
             padding: 20px;
         }
-        h1 {
+        h1, h2 {
             font-size: 2.2rem;
-            color: #ffffff;
+            color: #FFFFFF;
             margin-bottom: 1.5rem;
             animation: fadeIn 1s ease-out;
             text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
         }
-        .container {
-            max-width: 600px;
-            width: 100%;
-            padding: 20px;
-            background: var(--card-background);
-            border-radius: var(--card-radius);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-            animation: slideIn 0.8s ease-out;
-            position: relative;
-        }
-        h2 {
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -69,13 +77,8 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .quiz-select label, .question-form label {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            display: block;
-            color: var(--primary-color);
-        }
-        select, input, textarea {
+      
+        select, textarea {
             width: 100%;
             padding: 0.75rem;
             margin-top: 0.5rem;
@@ -84,6 +87,8 @@
             border: 1px solid #ccc;
             transition: box-shadow 0.3s, transform 0.2s;
         }
+      
+
         select:hover, input:hover, textarea:hover {
             box-shadow: 0 0 10px var(--secondary-color);
             transform: scale(1.02);
@@ -108,7 +113,24 @@
             transform: scale(1.05);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
-       
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            background: var(--card-background);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            background-color: #FFFFFF(232, 238, 201);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -117,46 +139,76 @@
     <h1>QUIZO-STUDENT DASHBOARD</h1>
     <div class="container">
         <section>
+            <h2>Select User</h2>
+            <select id="userSelect">
+                <option value="" disabled selected>Select a user</option>
+            </select>
+        </section>
+    </div>
+    <div class="container">
+        <section>
             <h2>Select Quiz</h2>
             <select id="quizDropdown">
                 <option value="" disabled selected>Select a quiz</option>
             </select>
-            <button onclick="goToQuiz()">Go to Quiz</button>
+            <button onclick="startQuiz()">Start Quiz</button>
             <div id="startQuizResponse" class="error"></div>
         </section>
-        <br>
+    </div>
+
+    <div class="container" id="quizContainer" style="display: none;">
+        <h2 id="quizTitle">Quiz Title Here</h2>
+        <div id="quizDescription" class="success">
+            <p>Quiz Description</p>
+        </div>
+        <div id="errorMessage" class="error"></div>
+        <div id="quizQuestions"></div>
+        <button id="submitQuiz" onclick="submitQuiz()">Submit Quiz</button>
+        <br><br>
+        <div id="quizResult" class="success"></div>
+        <button onclick="window.location.href='student-sign-in.html';">Choose another quiz</button>
     </div>
 
     <script>
         const apiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
-        
-        // Fetch quizzes and populate the dropdown
+        const userApiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/user';
+        const startQuizApiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/user/start';
+        const submitQuizApiUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/user/submit';
+        let userId = null;
+        let quizId = null;
+
+        // Fetch the list of users and populate the select dropdown
+        function fetchUsers() {
+            fetch(userApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const uniqueIds = [...new Set(data)].sort();
+                    const userSelect = document.getElementById('userSelect');
+                    uniqueIds.forEach(userId => {
+                        const option = document.createElement('option');
+                        option.value = userId;
+                        option.textContent = userId;
+                        userSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    document.getElementById('startQuizResponse').textContent = 'Error fetching users: ' + error.message;
+                });
+        }
+
+        // Fetch quizzes from the API and populate the dropdown
         function fetchQuizzes() {
             fetch(apiUrl)
-                .then(response => {
-                    console.log("Response status:", response.status); // Log status code
-                    console.log("Response headers:", response.headers);
-        
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(`HTTP error! Status: ${response.status}, Message: ${err.message}`);
-                        });
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log("Fetched data:", data); // Log the fetched data
-                    
                     const quizDropdown = document.getElementById('quizDropdown');
-                    quizDropdown.innerHTML = '<option value="" disabled selected>Select a quiz</option>'; // Reset dropdown
+                    quizDropdown.innerHTML = '<option value="" disabled selected>Select a quiz</option>';
         
-                    // Loop through data assuming it is an array of quiz objects
                     data.forEach(quiz => {
-                        // Check if the current item is a quiz metadata (first object)
-                        if (quiz.SK === "META") { // Only add quiz metadata to dropdown
+                        if (quiz.SK === "META") {
                             const option = document.createElement('option');
-                            option.value = quiz.PK; // Use PK as the value for the option
-                            option.textContent = quiz.title; // Display the quiz title
+                            option.value = quiz.PK;
+                            option.textContent = quiz.title;
                             quizDropdown.appendChild(option);
                         }
                     });
@@ -164,28 +216,172 @@
                 .catch(error => {
                     document.getElementById('startQuizResponse').textContent = 'Error fetching quizzes: ' + error.message;
                     document.getElementById('startQuizResponse').className = 'error';
-                    console.error('Error fetching quizzes:', error);
                 });
         }
-        
-        // Go to the selected quiz content page
-        function goToQuiz() {
-            const quizId = document.getElementById('quizDropdown').value; // Get selected quiz ID
-            if (!quizId) {
-                document.getElementById('startQuizResponse').textContent = 'Please select a quiz.'; // Display error if no quiz is selected
+
+        // Start the quiz on the same page after selecting the user and quiz
+        function startQuiz() {
+            userId = document.getElementById('userSelect').value;
+            quizId = document.getElementById('quizDropdown').value;
+
+            if (!userId || !quizId) {
+                document.getElementById('startQuizResponse').textContent = 'Please select both a user and a quiz.';
                 return;
             }
-            // Extract the ID that comes after 'QUIZ#' if it exists
-            const cleanedQuizId = quizId.split('QUIZ#')[1]; // Split the string by 'QUIZ#' and take the second part
-            if (!cleanedQuizId) {
-                document.getElementById('startQuizResponse').textContent = 'Invalid quiz ID.'; // Handle case where split doesn't return an ID
-                return;
-            }
-            // Redirect to quiz content page with the cleaned ID
-            window.location.href = `quizContent.html?quiz_id=${encodeURIComponent(cleanedQuizId)}`; // Use encodeURIComponent for safety
+
+            localStorage.setItem('quizStartTime', new Date().toISOString());
+
+            const cleanedQuizId = quizId.replace('QUIZ#', ''); // Remove 'QUIZ#' prefix only here
+
+            const startQuizData = {
+                user_id: userId,
+                quiz_id: cleanedQuizId, // Use the cleaned version here
+                attempted_at: new Date().toISOString(),
+                quiz_status: 'Started'
+            };
+            
+            // Make API call to start the quiz
+            fetch(startQuizApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(startQuizData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('quizResult').textContent = 'Quiz started successfully!';
+                document.getElementById('startQuizResponse').style.display = 'none';
+                document.getElementById('quizContainer').style.display = 'block';
+                fetchQuizQuestions(); // Call the API to get quiz questions here
+            })
+            .catch(error => {
+                document.getElementById('startQuizResponse').textContent = 'Error starting the quiz: ' + error.message;
+            });
         }
-        // Load quizzes when the page loads
-        window.onload = fetchQuizzes;
+
+        // Fetch quiz questions using quizId
+        function fetchQuizQuestions() {
+            if (!quizId) {
+                document.getElementById('errorMessage').textContent = 'Quiz ID not found.';
+            return;
+        }
+
+        // Clean the quizId by removing 'QUIZ#' if it exists
+        const cleanedQuizId = quizId.split('QUIZ#')[1] || quizId; // Remove 'QUIZ#' prefix if present
+
+        // Now make the API call with the cleaned quizId
+        fetch(`${apiUrl}/${encodeURIComponent(cleanedQuizId)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.questions && Array.isArray(data.questions)) {
+                    displayQuestions(data.questions);
+                    document.getElementById('quizTitle').textContent = data.title || 'Quiz Title Here';
+                    document.getElementById('quizDescription').innerHTML = `<p>${data.description || 'No description available.'}</p>`;
+                } else {
+                    document.getElementById('errorMessage').textContent = 'Quiz questions data not found.';
+                }
+            })
+            .catch(error => {
+                document.getElementById('errorMessage').textContent = 'Error fetching quiz questions: ' + error.message;
+            });
+        }
+
+        // Display quiz questions on the page
+        function displayQuestions(questions) {
+            const questionsContainer = document.getElementById('quizQuestions');
+            questionsContainer.innerHTML = '';
+            if (!questions.length) {
+                questionsContainer.innerHTML = '<p>No questions found for this quiz.</p>';
+                return;
+            }
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.dataset.id = question.question_id;
+                questionDiv.dataset.correctOption = question.correct_option;
+                
+                // Create radio buttons instead of checkboxes
+                questionDiv.innerHTML = `
+                    <h3>${question.question_text}</h3>
+                    <ul class="options">
+                        ${question.options.map((option, optionIndex) => `
+                            <li>
+                                <input 
+                                    type="radio" 
+                                    name="question-${index}" 
+                                    value="${option}" 
+                                    id="question-${index}-option-${optionIndex}">
+                                <label for="question-${index}-option-${optionIndex}">${option}</label>
+                            </li>`).join('')}
+                    </ul>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Submit the quiz after completing it
+        function submitQuiz() {
+            const resultDiv = document.getElementById('quizResult');
+            const questions = document.querySelectorAll('.question');
+            let score = 0;
+        
+            // Calculate score
+            questions.forEach(questionDiv => {
+                const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
+                const correctOption = questionDiv.dataset.correctOption?.trim();
+        
+                if (selectedOption && selectedOption.value.trim() === correctOption) {
+                    score++;
+                }
+            });
+        
+            resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
+        
+            // Lock radio buttons by disabling them
+            questions.forEach(questionDiv => {
+                const radioButtons = questionDiv.querySelectorAll('input[type="radio"]');
+                radioButtons.forEach(radio => {
+                    radio.disabled = true; // Disable all radio buttons
+                });
+            });
+            const cleanedQuizId = quizId.replace('QUIZ#', ''); // Remove 'QUIZ#' prefix only here
+            // Prepare data for submission
+            const submitData = {
+                user_id: userId,
+                quiz_id: cleanedQuizId,
+                score: score !== undefined && score !== null ? score : 0,
+                submitted_at: new Date().toISOString(),
+                status: 'Submitted',
+                time_taken: calculateTimeTaken()
+            };
+        
+            // Send data to API
+            fetch(submitQuizApiUrl, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(submitData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultDiv.textContent += ' Quiz submitted successfully!';
+                    document.getElementById('submitQuiz').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                document.getElementById('errorMessage').textContent = 'Error submitting quiz: ' + error.message;
+            });
+        }
+        
+        function calculateTimeTaken() {
+            const startTime = new Date(localStorage.getItem('quizStartTime'));
+            const endTime = new Date();
+            return Math.floor((endTime - startTime) / 1000); // Return time taken in seconds
+        }
+
+        window.onload = () => {
+            fetchQuizzes();
+            fetchUsers();
+        };
     </script>
 </body>
 </html>
