@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Quiz App
+
+  SAM Template for a Quiz Application using DynamoDB, Lambda, and API Gateway.
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 256
+    Runtime: python3.12
+    Handler: app.lambda_handler
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        QUIZ_TABLE: QQBS
+        QUESTION_TABLE: QQBS
+        USER_TABLE: UserBS
+
+Resources:
+  QuizTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: QQBS
+      AttributeDefinitions:
+        - AttributeName: "PK"
+          AttributeType: "S"
+        - AttributeName: "SK"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "PK"
+          KeyType: "HASH"
+        - AttributeName: "SK"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UserBS
+      AttributeDefinitions:
+        - AttributeName: "user_id"
+          AttributeType: "S"
+        - AttributeName: "quiz_id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "user_id"
+          KeyType: "HASH"
+        - AttributeName: "quiz_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  QuizFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: QQBS
+        - DynamoDBCrudPolicy:
+            TableName: UserBS
+      Events:
+        CreateQuiz:
+          Type: Api
+          Properties:
+            Path: /quiz
+            Method: post
+        GetQuiz:
+          Type: Api
+          Properties:
+            Path: /quiz/{quiz_id}
+            Method: get
+        ListQuizzes:  # New event for listing all quizzes
+          Type: Api
+          Properties:
+            Path: /quiz
+            Method: get
+        UpdateQuiz:
+          Type: Api
+          Properties:
+            Path: /quiz/{quiz_id}
+            Method: put
+        DeleteQuiz:
+          Type: Api
+          Properties:
+            Path: /quiz/{quiz_id}
+            Method: delete
+        DeleteQuestion:
+          Type: Api
+          Properties:
+            Path: /question/{quiz_id}/{question_id}
+            Method: delete
+        AddQuestion:
+          Type: Api
+          Properties:
+            Path: /question
+            Method: post
+        GetQuestion:
+          Type: Api
+          Properties:
+            Path: /question/{quiz_id}/{question_id}
+            Method: get
+        StartQuiz:
+          Type: Api
+          Properties:
+            Path: /user/start
+            Method: post
+        SubmitQuiz:
+          Type: Api
+          Properties:
+            Path: /user/submit
+            Method: put
+        ListUsers:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: get
+        CreateUser:  # New endpoint for creating a user
+          Type: Api
+          Properties:
+            Path: /user
+            Method: post
+
+Outputs:
+  QuizApi:
+    Description: API Gateway endpoint URL for Prod stage for Quiz functions
+    Value: https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod
+  QuizFunction:
+    Description: Quiz Lambda Function ARN
+    Value: !GetAtt QuizFunction.Arn
+  QuizFunctionIamRole:
+    Description: Implicit IAM Role created for Quiz function
+    Value: !GetAtt QuizFunctionRole.Arn
