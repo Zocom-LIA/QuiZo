@@ -6,119 +6,360 @@
     <title>Student Interface</title>
     <!-- Include Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
-        .question {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: auto;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            color: #585c5e;
-            background-color: #ffffff77;
-            transition: box-shadow 0.3s, transform 0.2s;
-        }
-        .options {
-            margin-top: 10px;
-        }
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-        .success {
-            color: rgb(0, 30, 128);
-            font-weight: bold;
-        }
         :root {
             --primary-color: #4A90E2;
             --secondary-color: #7ED321;
             --tertiary-color: #F5A623;
             --danger-color: #E74C3C;
-            --background-color: #F0F3F7;
-            --card-background: #FFFFFF;
+            --background-color: #141526;
+            --card-background: rgba(255, 255, 255, 0.9);
             --shadow-color: rgba(0, 0, 0, 0.1);
-            --card-radius: 12px;
-            --font-family: 'Arial', sans-serif;
+            --card-radius: 16px;
+            --font-family: 'Poppins', sans-serif;
         }
+    
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+    
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(45deg, #3ec7d6ef, #1c698aea, #141516e5);
-            color: #181616;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        h1, h2 {
-            font-size: 2.2rem;
-            color: #FFFFFF;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        select, textarea {
+        background: linear-gradient(120deg, #51609b98 0%, #c8dfeb 100%);
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        padding-top: 70px; /* For navbar space */
+        animation: fadeBackground 8s infinite alternate ease-in-out;
+    }
+    
+   
+    
+        /* Navbar */
+        .navbar {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 15px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
             width: 100%;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            border-radius: var(--card-radius);
-            border: 1px solid #ccc;
-            transition: box-shadow 0.3s, transform 0.2s;
+            z-index: 10;
         }
-        select:hover, input:hover, textarea:hover {
-            box-shadow: 0 0 10px var(--secondary-color);
-            transform: scale(1.02);
-        }
-        select:focus, input:focus, textarea:focus {
-            box-shadow: 0 0 10px var(--primary-color);
-            border-color: var(--primary-color);
-            outline: none;
-        }
-        button {
-            padding: 0.75rem 1.5rem;
+    
+        .navbar-brand {
+            font-size: 2rem;
             font-weight: bold;
+            color: var(--tertiary-color);
+            transition: all 0.3s ease;
+        }
+    
+        .navbar-brand:hover {
+            color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+    
+        .navbar-nav .nav-link {
+            font-weight: bold;
+            color: #c9cfbd;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+    
+        .navbar-nav .nav-link:hover {
+            background: var(--primary-color);
             color: white;
+        }
+    
+        .navbar-toggler {
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+    
+        /* Containers */
+        .container {
+        max-width: 700px;
+        width: 100%;
+        padding: 25px;
+        background: var(--card-background);
+        border-radius: var(--card-radius);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+        animation: scaleUp 0.8s ease-out;
+    }
+    
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    
+        h1, h2 {
+            color:  rgb(136, 130, 151);
+            text-align: center;
+            margin-bottom: 15px;
+            
+        }
+    
+        /* Buttons */
+        button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
             background: var(--primary-color);
             border: none;
             border-radius: var(--card-radius);
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: all 0.3s ease;
         }
+    
         button:hover {
-            background-color: var(--tertiary-color);
-            transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+            background: var(--secondary-color);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
         }
+    
         button i {
             margin-right: 8px;
         }
-        .container {
-            max-width: 600px;
+    
+        /* Select Inputs */
+        select {
             width: 100%;
-            padding: 20px;
-            background: var(--card-background);
+            padding: 12px;
             border-radius: var(--card-radius);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+    
+        select:hover, select:focus {
+            box-shadow: 0 0 10px var(--primary-color);
+            outline: none;
+        }
+    
+        /* Quiz Section */
+        .results-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: slideIn 0.5s ease-out;
+        }
+    
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+    
+        .results-content h1, .results-content p {
+            text-align: center;
             margin-bottom: 20px;
         }
-        h2 {
-            font-size: 1.8rem;
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    
+        .results-button {
+            margin: 10px;
+            padding: 10px 25px;
+            border-radius: var(--card-radius);
+            background: var(--tertiary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
+    
+        .results-button:hover {
+            transform: scale(1.1);
+            background: var(--secondary-color);
+        }
+    
+        /* Footer */
+        .footer {
+        
+        padding: 05px 200px;
+        color: #ccc;
+        text-align: center;
+       
+    }
+
+    .footer h5 {
+        font-size: 1.0rem;
+        color: var(--tertiary-color);
+    }
+
+    .social-icons a {
+        font-size: 2rem;
+        margin: 0 15px;
+        color: rgb(136, 130, 151);
+        transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    .social-icons a:hover {
+        color: var(--tertiary-color);
+        transform: scale(1.2);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .footer h5 {
+            font-size: 1rem;
+        }
+    }
+    .question-box {
+        background: var(--card-background);
+        border-radius: var(--card-radius);
+        box-shadow: 0 8px 15px var(--shadow-color);
+        padding: 20px;
+        margin-bottom: 20px;
+        animation: fadeIn 0.5s ease;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .question-box:hover {
+        transform: scale(1.02);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .question-number {
+        background: var(--primary-color);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .question-text {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .options {
+        list-style: none;
+        padding: 0;
+    }
+
+    .options li {
+        margin-bottom: 10px;
+    }
+
+    .options input[type="radio"] {
+        margin-right: 10px;
+    }
+
+    .options label {
+        font-size: 1rem;
+        color: #555;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .options label:hover {
+        color: var(--primary-color);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .question-box {
+            padding: 15px;
+        }
+
+        .question-number {
+            font-size: 1rem;
+        }
+
+        .question-text {
+            font-size: 1rem;
+        }
+
+        .options label {
+            font-size: 0.9rem;
+        }
+    }
+    
     </style>
+    
+        
+    
 </head>
 <body>
+     <!-- Navbar -->
+     <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="quizo.html"><i class="fas fa-bug"></i> QUIZO</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Mission</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Demo Test</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br><br>
     <!-- Homepage Button -->
     <button onclick="window.location.href='quizo.html';">
         <i class="fas fa-home"></i> Go to Homepage
     </button>
+    <br><br><br>
+    <h1 class="dashboard-heading">
+        <i class="fas fa-graduation-cap"></i> QUIZO-STUDENT DASHBOARD
+    </h1>
     <br><br>
-    <h1>QUIZO-STUDENT DASHBOARD</h1>
 
     <!-- Select User Section -->
     <div class="container">
@@ -145,6 +386,16 @@
     </div>
 
     <!-- Quiz Container -->
+    <div id="resultsScreen" class="results-container" style="display: none;">
+        <div class="results-content">
+            <h1 id="resultMessage" style="font-size: 3rem; margin-bottom: 20px;"></h1>
+            <i id="resultIcon" class="fas" style="font-size: 5rem; margin-bottom: 20px;"></i>
+            <p id="resultDetails" style="font-size: 1.5rem;"></p>
+            <button onclick="restartQuiz()" class="results-button">Restart Quiz</button>
+            <button onclick="openResultsWindow()" class="results-button">View in New Window</button>
+        </div>
+    </div>
+    
     <div class="container" id="quizContainer" style="display: none;">
         <h2 id="quizTitle"><i class="fas fa-file-alt"></i> Quiz Title Here</h2>
         <div id="quizDescription" class="success">
@@ -164,6 +415,20 @@
         <br><br>
         <div id="quizResult" class="success"></div>
     </div>
+<br>
+     <!-- Footer -->
+     <footer>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <h5>&copy; <script>document.write(new Date().getFullYear());</script> QUIZO. All Rights Reserved.</h5>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
     
 
@@ -285,90 +550,96 @@
 
         // Display quiz questions on the page
         function displayQuestions(questions) {
-            const questionsContainer = document.getElementById('quizQuestions');
-            questionsContainer.innerHTML = '';
-            if (!questions.length) {
-                questionsContainer.innerHTML = '<p>No questions found for this quiz.</p>';
-                return;
-            }
-            questions.forEach((question, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.dataset.id = question.question_id;
-                questionDiv.dataset.correctOption = question.correct_option;
-                
-                // Create radio buttons instead of checkboxes
-                questionDiv.innerHTML = `
-                    <h3>${question.question_text}</h3>
-                    <ul class="options">
-                        ${question.options.map((option, optionIndex) => `
-                            <li>
-                                <input 
-                                    type="radio" 
-                                    name="question-${index}" 
-                                    value="${option}" 
-                                    id="question-${index}-option-${optionIndex}">
-                                <label for="question-${index}-option-${optionIndex}">${option}</label>
-                            </li>`).join('')}
-                    </ul>
-                `;
-                questionsContainer.appendChild(questionDiv);
-            });
-        }
+    const questionsContainer = document.getElementById('quizQuestions');
+    questionsContainer.innerHTML = '';
+    questions.forEach((question, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+        questionDiv.dataset.correctOption = question.correct_option.trim(); // Ensure correct_option is set
+
+        questionDiv.innerHTML = `
+            <h3>Question ${index + 1}: ${question.question_text}</h3>
+            <ul class="options">
+                ${question.options.map((option, optionIndex) => `
+                    <li>
+                        <input 
+                            type="radio" 
+                            name="question-${index}" 
+                            value="${option.trim()}" 
+                            id="question-${index}-option-${optionIndex}">
+                        <label for="question-${index}-option-${optionIndex}">${option}</label>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+        questionsContainer.appendChild(questionDiv);
+    });
+}
 
         // Submit the quiz after completing it
         function submitQuiz() {
-            const resultDiv = document.getElementById('quizResult');
-            const questions = document.querySelectorAll('.question');
-            let score = 0;
-        
-            // Calculate score
-            questions.forEach(questionDiv => {
-                const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
-                const correctOption = questionDiv.dataset.correctOption?.trim();
-        
-                if (selectedOption && selectedOption.value.trim() === correctOption) {
-                    score++;
-                }
-            });
-        
-            resultDiv.textContent = `You scored ${score} out of ${questions.length}.`;
-        
-            // Lock radio buttons by disabling them
-            questions.forEach(questionDiv => {
-                const radioButtons = questionDiv.querySelectorAll('input[type="radio"]');
-                radioButtons.forEach(radio => {
-                    radio.disabled = true; // Disable all radio buttons
-                });
-            });
-            const cleanedQuizId = quizId.replace('QUIZ#', ''); // Remove 'QUIZ#' prefix only here
-            // Prepare data for submission
-            const submitData = {
-                user_id: userId,
-                quiz_id: cleanedQuizId,
-                score: score !== undefined && score !== null ? score : 0,
-                submitted_at: new Date().toISOString(),
-                status: 'Submitted',
-                time_taken: calculateTimeTaken()
-            };
-        
-            // Send data to API
-            fetch(submitQuizApiUrl, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(submitData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    resultDiv.textContent += ' Quiz submitted successfully!';
-                    document.getElementById('submitQuiz').style.display = 'none';
-                }
-            })
-            .catch(error => {
-                document.getElementById('errorMessage').textContent = 'Error submitting quiz: ' + error.message;
-            });
+    const questions = document.querySelectorAll(".question");
+    let score = 0;
+
+    // Debugging: Log questions length
+    console.log("Total Questions:", questions.length);
+
+    // Calculate score
+    questions.forEach((questionDiv, index) => {
+        const selectedOption = questionDiv.querySelector("input[type='radio']:checked");
+        const correctOption = questionDiv.dataset.correctOption?.trim();
+
+        // Debugging: Log selected and correct option for each question
+        console.log(`Question ${index + 1}`);
+        console.log("Correct Option:", correctOption);
+        console.log("Selected Option:", selectedOption ? selectedOption.value.trim() : "None");
+
+        if (selectedOption) {
+            const selectedValue = selectedOption.value.trim();
+            if (selectedValue === correctOption) {
+                score++;
+            }
         }
+    });
+
+    console.log("Final Score:", score);
+
+    // Display results
+    const totalQuestions = questions.length;
+    const percentage = (score / totalQuestions) * 100;
+    const resultsScreen = document.getElementById("resultsScreen");
+    const resultMessage = document.getElementById("resultMessage");
+    const resultIcon = document.getElementById("resultIcon");
+    const resultDetails = document.getElementById("resultDetails");
+
+    if (percentage >= 80) {
+        resultMessage.textContent = "Excellent!";
+        resultIcon.className = "fas fa-smile-beam";
+        resultIcon.style.color = "#28a745"; // Green
+        resultDetails.textContent = `You scored ${score} out of ${totalQuestions}. Outstanding performance!`;
+    } else if (percentage >= 50) {
+        resultMessage.textContent = "Good Job!";
+        resultIcon.className = "fas fa-meh";
+        resultIcon.style.color = "#ffc107"; // Yellow
+        resultDetails.textContent = `You scored ${score} out of ${totalQuestions}. You did well, but there's room for improvement.`;
+    } else {
+        resultMessage.textContent = "Keep Trying!";
+        resultIcon.className = "fas fa-sad-tear";
+        resultIcon.style.color = "#dc3545"; // Red
+        resultDetails.textContent = `You scored ${score} out of ${totalQuestions}. Don't give up, try again!`;
+    }
+
+    resultsScreen.style.display = "flex";
+    resultsScreen.classList.add("show");
+}
+
+
+function restartQuiz() {
+    document.getElementById("resultsScreen").style.display = "none";
+    document.getElementById("quizContainer").style.display = "block";
+    resetQuiz();
+}
+
         
         function calculateTimeTaken() {
             const startTime = new Date(localStorage.getItem('quizStartTime'));

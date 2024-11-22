@@ -5,140 +5,316 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz & Question Manager</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
     
-    <style>
-        /* Root styles and reset */
-        :root {
-            --primary-color: #4A90E2;
-            --secondary-color: #7ED321;
-            --tertiary-color: #F5A623;
-            --danger-color: #E74C3C;
-            --background-color: #F0F3F7;
-            --card-background: #FFFFFF;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --card-radius: 12px;
-            --font-family: 'Arial', sans-serif;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-        }
-        body {
-            background: linear-gradient(45deg, #3ec7d6ef, #1c698aea, #141516e5);
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 2.2rem;
-            color: #FFFFFF;
-            margin-bottom: 1.5rem;
-            animation: fadeIn 1s ease-out;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-        }
+<style>
+    /* Root styles and reset */
+    :root {
+        --primary-color: #4A90E2;
+        --secondary-color: #7ED321;
+        --tertiary-color: #272623;
+        --danger-color: #E74C3C;
+        --background-color: #F0F3F7;
+        --card-background: rgba(255, 255, 255, 0.85);
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --card-radius: 16px;
+        --font-family: 'Poppins', sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-family);
+    }
+
+    body {
+        background: linear-gradient(120deg, #51609b98 0%, #c8dfeb 100%);
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        padding-top: 70px; /* For navbar space */
+        animation: fadeBackground 8s infinite alternate ease-in-out;
+    }
+
+    @keyframes fadeBackground {
+        0% { background: linear-gradient(120deg, #51609b98 0%, #c8dfeb 100%); }
+        50% { background: linear-gradient(120deg, #202e68bb 0%, #c8dfeb 100%); }
+        100% { background: linear-gradient(120deg, #032c38c4 0%, #c8dfeb 100%); }
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #FFFFFF;
+        margin-bottom: 1.5rem;
+        animation: fadeIn 1s ease-out;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+        max-width: 700px;
+        width: 100%;
+        padding: 25px;
+        background: var(--card-background);
+        border-radius: var(--card-radius);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+        animation: scaleUp 0.8s ease-out;
+    }
+
+    @keyframes scaleUp {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: var(--primary-color);
+        transition: color 0.3s ease-in-out;
+    }
+
+    select, input, textarea {
+        width: 100%;
+        padding: 0.9rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        border-radius: var(--card-radius);
+        border: 1px solid #ccc;
+        transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    select:hover, input:hover, textarea:hover {
+        box-shadow: 0 0 15px var(--secondary-color);
+        transform: scale(1.02);
+    }
+
+    select:focus, input:focus, textarea:focus {
+        box-shadow: 0 0 15px var(--primary-color);
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    button {
+        padding: 0.75rem 1.5rem;
+        font-weight: bold;
+        color: white;
+        background: rgb(136, 130, 151);
+        border: none;
+        border-radius: var(--card-radius);
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(120deg, var(--tertiary-color), var(--primary-color));
+    }
+
+    .delete-button {
+        background-color: var(--danger-color);
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0.4rem 0.8rem;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .delete-button:hover {
+        background-color: #c0392b;
+    }
+
+    .questions-container h2, .delete-quiz h2, .create-quiz h2 {
+        font-size: 1.8rem;
+        color: rgb(136, 130, 151);
+        margin-bottom: 1rem;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .question-box {
+        background-color: var(--card-background);
+        border-radius: var(--card-radius);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        padding: 1.2rem;
+        margin-bottom: 1.2rem;
+        position: relative;
+        animation: fadeIn 0.7s ease-out;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .question-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar {
+    padding: 10px 20px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff !important;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.navbar-brand:hover {
+    color: #f5a623;
+    transform: scale(1.1);
+}
+
+.navbar-light .navbar-nav .nav-link {
+    font-weight: bold;
+    color: #c9cfbd;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    padding: 10px 15px;
+    margin: 0 5px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    z-index: 1;
+}
+
+.navbar-light .navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+   
+    z-index: -1;
+    transition: all 0.4s ease-in-out;
+}
+
+.navbar-light .navbar-nav .nav-link:hover::before,
+.navbar-light .navbar-nav .nav-link.active::before {
+    left: 0;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link.active {
+    color: #fff;
+    transform: scale(1.1);
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-light .navbar-nav .nav-link:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: #f5a623;
+    transition: all 0.4s ease-in-out;
+    transform: translateX(-50%);
+}
+
+.navbar-light .navbar-nav .nav-link:hover::after {
+    width: 80%;
+}
+
+.navbar-toggler {
+    border: none;
+    background: none;
+    color: #fff;
+    font-size: 1.5rem;
+    outline: none;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-toggler:focus {
+    transform: rotate(90deg);
+    color: #f5a623;
+}
+
+
+    .footer {
+        
+        padding: 05px 200px;
+        color: #ccc;
+        text-align: center;
+       
+    }
+
+    .footer h5 {
+        font-size: 1.0rem;
+        color: var(--tertiary-color);
+    }
+
+    .social-icons a {
+        font-size: 2rem;
+        margin: 0 15px;
+        color: rgb(136, 130, 151);
+        transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    .social-icons a:hover {
+        color: var(--tertiary-color);
+        transform: scale(1.2);
+    }
+
+    @media (max-width: 768px) {
         .container {
-            max-width: 600px;
-            width: 100%;
-            padding: 20px;
-            background: var(--card-background);
-            border-radius: var(--card-radius);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-            animation: slideIn 0.8s ease-out;
-            position: relative;
+            padding: 15px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        h1 {
+            font-size: 2rem;
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .footer h5 {
+            font-size: 1rem;
         }
-        .quiz-select label, .question-form label {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            display: block;
-            color: var(--primary-color);
-        }
-        select, input, textarea {
-            width: 100%;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            border-radius: var(--card-radius);
-            border: 1px solid #ccc;
-            transition: box-shadow 0.3s, transform 0.2s;
-        }
-        select:hover, input:hover, textarea:hover {
-            box-shadow: 0 0 10px var(--secondary-color);
-            transform: scale(1.02);
-        }
-        select:focus, input:focus, textarea:focus {
-            box-shadow: 0 0 10px var(--primary-color);
-            border-color: var(--primary-color);
-            outline: none;
-        }
-        button {
-            padding: 0.75rem 1.5rem;
-            font-weight: bold;
-            color: white;
-            background: var(--primary-color);
-            border: none;
-            border-radius: var(--card-radius);
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        button:hover {
-            background-color: var(--tertiary-color);
-            transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-        .delete-button {
-            background-color: var(--danger-color);
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 0.4rem 0.8rem;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        .delete-button:hover {
-            background-color: #c0392b;
-        }
-        .questions-container h2, .delete-quiz h2, .create-quiz h2 {
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .question-box {
-            background-color: var(--card-background);
-            border-radius: var(--card-radius);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            position: relative;
-            animation: fadeIn 0.5s ease;
-            transition: transform 0.3s;
-        }
-        .question-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
 
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand mx-auto" href="quizo.html"><i class="fas fa-bug"></i> QUIZO</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link active" href="#">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Mission</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Team</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Demo Test</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<br>
     <h1><i class="fas fa-tachometer-alt"></i> QuiZo | Quiz Builder</h1>
     <button onclick="window.location.href='quizo.html';">
         <i class="fas fa-home"></i> Home Page
@@ -218,6 +394,17 @@
             <i class="fas fa-trash-alt"></i> Delete Quiz
         </button>
     </div>
+<br>
+    <!-- Footer -->
+<footer class="footer">
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+    <h5>&copy; <script>document.write(new Date().getFullYear());</script> BugSquashers. All Rights Reserved.</h5>
+</footer>
 
     <script>
         const quizListUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
