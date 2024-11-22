@@ -3,7 +3,11 @@
 version = 0.1
 
 [default.global.parameters]
+<<<<<<< HEAD
 stack_name = "myapp"
+=======
+stack_name = "quizo"
+>>>>>>> dev
 
 [default.build.parameters]
 cached = true

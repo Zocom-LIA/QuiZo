@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Quiz Management Dashboard</title>
     <style>
         body {
@@ -142,5 +143,654 @@
 app.use(cors()); // Use this before your routes are set up
 
     </script>
+=======
+    <title>Quiz & Question Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+<style>
+    /* Root styles and reset */
+    :root {
+        --primary-color: #4A90E2;
+        --secondary-color: #7ED321;
+        --tertiary-color: #272623;
+        --danger-color: #E74C3C;
+        --background-color: #F0F3F7;
+        --card-background: rgba(255, 255, 255, 0.85);
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --card-radius: 16px;
+        --font-family: 'Poppins', sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-family);
+    }
+
+    body {
+        background: linear-gradient(120deg, #51609b98 0%, #c8dfeb 100%);
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        padding-top: 70px; /* For navbar space */
+        animation: fadeBackground 8s infinite alternate ease-in-out;
+    }
+
+    @keyframes fadeBackground {
+        0% { background: linear-gradient(120deg, #51609b98 0%, #c8dfeb 100%); }
+        50% { background: linear-gradient(120deg, #202e68bb 0%, #c8dfeb 100%); }
+        100% { background: linear-gradient(120deg, #032c38c4 0%, #c8dfeb 100%); }
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #FFFFFF;
+        margin-bottom: 1.5rem;
+        animation: fadeIn 1s ease-out;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+        max-width: 700px;
+        width: 100%;
+        padding: 25px;
+        background: var(--card-background);
+        border-radius: var(--card-radius);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+        animation: scaleUp 0.8s ease-out;
+    }
+
+    @keyframes scaleUp {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: var(--primary-color);
+        transition: color 0.3s ease-in-out;
+    }
+
+    select, input, textarea {
+        width: 100%;
+        padding: 0.9rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        border-radius: var(--card-radius);
+        border: 1px solid #ccc;
+        transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    select:hover, input:hover, textarea:hover {
+        box-shadow: 0 0 15px var(--secondary-color);
+        transform: scale(1.02);
+    }
+
+    select:focus, input:focus, textarea:focus {
+        box-shadow: 0 0 15px var(--primary-color);
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    button {
+        padding: 0.75rem 1.5rem;
+        font-weight: bold;
+        color: white;
+        background: rgb(136, 130, 151);
+        border: none;
+        border-radius: var(--card-radius);
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(120deg, var(--tertiary-color), var(--primary-color));
+    }
+
+    .delete-button {
+        background-color: var(--danger-color);
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0.4rem 0.8rem;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .delete-button:hover {
+        background-color: #c0392b;
+    }
+
+    .questions-container h2, .delete-quiz h2, .create-quiz h2 {
+        font-size: 1.8rem;
+        color: rgb(136, 130, 151);
+        margin-bottom: 1rem;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .question-box {
+        background-color: var(--card-background);
+        border-radius: var(--card-radius);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        padding: 1.2rem;
+        margin-bottom: 1.2rem;
+        position: relative;
+        animation: fadeIn 0.7s ease-out;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .question-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar {
+    padding: 10px 20px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff !important;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.navbar-brand:hover {
+    color: #f5a623;
+    transform: scale(1.1);
+}
+
+.navbar-light .navbar-nav .nav-link {
+    font-weight: bold;
+    color: #c9cfbd;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    padding: 10px 15px;
+    margin: 0 5px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    z-index: 1;
+}
+
+.navbar-light .navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+   
+    z-index: -1;
+    transition: all 0.4s ease-in-out;
+}
+
+.navbar-light .navbar-nav .nav-link:hover::before,
+.navbar-light .navbar-nav .nav-link.active::before {
+    left: 0;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link.active {
+    color: #fff;
+    transform: scale(1.1);
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-light .navbar-nav .nav-link:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: #f5a623;
+    transition: all 0.4s ease-in-out;
+    transform: translateX(-50%);
+}
+
+.navbar-light .navbar-nav .nav-link:hover::after {
+    width: 80%;
+}
+
+.navbar-toggler {
+    border: none;
+    background: none;
+    color: #fff;
+    font-size: 1.5rem;
+    outline: none;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-toggler:focus {
+    transform: rotate(90deg);
+    color: #f5a623;
+}
+
+
+    .footer {
+        
+        padding: 05px 200px;
+        color: #ccc;
+        text-align: center;
+       
+    }
+
+    .footer h5 {
+        font-size: 1.0rem;
+        color: var(--tertiary-color);
+    }
+
+    .social-icons a {
+        font-size: 2rem;
+        margin: 0 15px;
+        color: rgb(136, 130, 151);
+        transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    .social-icons a:hover {
+        color: var(--tertiary-color);
+        transform: scale(1.2);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .footer h5 {
+            font-size: 1rem;
+        }
+    }
+</style>
+</head>
+<body>
+
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand mx-auto" href="quizo.html"><i class="fas fa-bug"></i> QUIZO</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link active" href="#">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Mission</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Team</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Demo Test</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<br>
+    <h1><i class="fas fa-tachometer-alt"></i> QuiZo | Quiz Builder</h1>
+    <button onclick="window.location.href='quizo.html';">
+        <i class="fas fa-home"></i> Home Page
+    </button>
+    <br>
+    <!-- Create Quiz Section -->
+    <div class="container create-quiz">
+        <h2><i class="fas fa-plus-circle"></i> Create a New Quiz</h2>
+        <p>Please add the data as required in the text box.</p><br>
+        <label for="quiz_id">Quiz ID *</label>
+        <input type="text" id="quiz_id" placeholder="Enter Quiz ID" required>
+
+        <label for="title">Quiz Title *</label>
+        <input type="text" id="title" placeholder="Enter Quiz Title" required>
+
+        <label for="description">Quiz Description</label>
+        <textarea id="description" placeholder="Enter Quiz Description" rows="2" required></textarea>
+
+        <label for="teacher_id">Teacher ID *</label>
+        <input type="text" id="teacher_id" placeholder="Enter Teacher ID" required>
+
+        <button onclick="createQuiz()">
+            <i class="fas fa-plus-circle"></i> Create Quiz
+        </button>
+    </div>
+
+    <!-- Existing functionality for quiz and question management below -->
+
+    <div class="container quiz-select">
+        <h2><i class="fas fa-tasks"></i> Select Quiz</h2>
+        <p>Please! Select a quiz for Add questions</p>
+        <select id="quizSelect" onchange="loadQuestions()">
+            <option value="">-- Select a Quiz --</option>
+        </select>
+    </div>
+
+    <div class="container question-form" id="questionForm" style="display: none;">
+        <h2><i class="fas fa-question-circle"></i> Add Question</h2>
+        <p>Please use the same form for adding new question.</p><br>
+        <label for="question_text">Question Text</label>
+        <textarea id="question_text" rows="3" required></textarea>
+
+        <label for="option1">Option 1</label>
+        <input type="text" id="option1" required>
+
+        <label for="option2">Option 2</label>
+        <input type="text" id="option2" required>
+
+        <label for="option3">Option 3</label>
+        <input type="text" id="option3" required>
+
+        <label for="option4">Option 4</label>
+        <input type="text" id="option4" required>
+
+        <label for="correct_option">Correct Option</label>
+        <input type="text" id="correct_option" required>
+
+        <button onclick="addQuestion()">
+            <i class="fas fa-question-circle"></i> Add Question
+        </button>
+    </div>
+
+    <div class="container questions-container" id="questions-container">
+        <h2><i class="fas fa-list"></i> Questions</h2>
+        <p>Here! You can Get and Delete the questions!</p>
+        <div id="questionsList"></div>
+    </div>
+
+    <!-- Delete Quiz Section -->
+    <div class="container delete-quiz">
+        <h2><i class="fas fa-trash-alt"></i> Delete a Quiz</h2>
+        <label for="deleteQuizSelect">Select Quiz to Delete</label>
+        <select id="deleteQuizSelect">
+            <option value="">-- Select a Quiz --</option>
+        </select>
+        <button onclick="deleteQuiz()">
+            <i class="fas fa-trash-alt"></i> Delete Quiz
+        </button>
+    </div>
+<br>
+    <!-- Footer -->
+<footer class="footer">
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+    <h5>&copy; <script>document.write(new Date().getFullYear());</script> BugSquashers. All Rights Reserved.</h5>
+</footer>
+
+    <script>
+        const quizListUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
+        const createQuizUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz';
+        const quizDetailUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz/{quiz_id}';
+        const addQuestionUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/question';
+        const deleteQuestionUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/question/{quiz_id}/{question_id}';
+        const deleteQuizUrl = 'https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz/{quiz_id}';
+
+        async function createQuiz() {
+            const quizData = {
+                PK: `QUIZ#${document.getElementById('quiz_id').value}`,
+                SK: "META",
+                teacher_id: document.getElementById('teacher_id').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                questions: []
+            };
+
+            try {
+                const response = await fetch(createQuizUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(quizData)
+                });
+                if (response.ok) {
+                    alert('Quiz created successfully');
+                    loadQuizzes();  // Refresh quiz list
+                    document.getElementById('quiz_id').value = '';
+                    document.getElementById('title').value = '';
+                    document.getElementById('description').value = '';
+                    document.getElementById('teacher_id').value = '';
+                } else {
+                    throw new Error('Failed to create quiz');
+                }
+            } catch (error) {
+                console.error('Error creating quiz:', error);
+                alert(error.message);
+            }
+        }
+
+        async function loadQuizzes() {
+    try {
+        const response = await fetch(quizListUrl);
+        if (!response.ok) throw new Error('Failed to load quizzes');
+        const quizzes = await response.json();
+        const quizSelect = document.getElementById('quizSelect');
+        const deleteQuizSelect = document.getElementById('deleteQuizSelect');
+        
+        // Clear the dropdowns
+        quizSelect.innerHTML = `<option value="">-- Select a Quiz --</option>`;
+        deleteQuizSelect.innerHTML = `<option value="">-- Select a Quiz --</option>`;
+        
+        // Add only non-empty quiz items
+        quizzes.forEach(quiz => {
+            if (quiz.PK && quiz.title) {
+                const option = document.createElement('option');
+                option.value = quiz.PK;
+                option.textContent = quiz.title;
+                quizSelect.appendChild(option);
+
+                const deleteOption = option.cloneNode(true);
+                deleteQuizSelect.appendChild(deleteOption);
+            }
+        });
+    } catch (error) {
+        console.error('Error loading quizzes:', error);
+    }
+}
+
+        async function loadQuestions() {
+            const selectedQuiz = document.getElementById('quizSelect').value;
+            if (!selectedQuiz) return;
+
+            const cleanedQuizId = selectedQuiz.split('QUIZ#')[1];
+            document.getElementById('questionForm').style.display = 'block';
+
+            try {
+                const response = await fetch(quizDetailUrl.replace('{quiz_id}', cleanedQuizId));
+                if (!response.ok) throw new Error('Failed to load questions');
+                const quizData = await response.json();
+                displayQuestions(quizData.questions || []);
+            } catch (error) {
+                console.error('Error loading questions:', error);
+            }
+        }
+
+        async function addQuestion() {
+    const selectedQuiz = document.getElementById('quizSelect').value;
+    if (!selectedQuiz) return alert('Please select a quiz first.');
+
+    const cleanedQuizId = selectedQuiz.split('QUIZ#')[1]; // Clean quiz ID to use only the identifier after "QUIZ#"
+    
+    // Fetch current questions to determine the last question ID number
+    let currentQuestions = [];
+    try {
+        const response = await fetch(`https://9ngq5xuj63.execute-api.eu-north-1.amazonaws.com/prod/quiz/${cleanedQuizId}`);
+        if (response.ok) {
+            const quizData = await response.json();
+            currentQuestions = quizData.questions || [];
+        } else {
+            throw new Error('Failed to load current questions');
+        }
+    } catch (error) {
+        console.error('Error loading questions:', error);
+        alert(error.message);
+        return;
+    }
+    
+    // Determine the next question number
+    let nextQuestionNumber = 1;
+    if (currentQuestions.length > 0) {
+        const questionNumbers = currentQuestions
+            .map(question => parseInt(question.SK.replace('Q#', '')))
+            .filter(num => !isNaN(num));
+        if (questionNumbers.length > 0) {
+            nextQuestionNumber = Math.max(...questionNumbers) + 1;
+        }
+    }
+    
+    // Prepare question data
+    const questionData = {
+        question_id: `Q#${nextQuestionNumber}`,
+        quiz_id: selectedQuiz,
+        question_text: document.getElementById('question_text').value,
+        options: [
+            document.getElementById('option1').value,
+            document.getElementById('option2').value,
+            document.getElementById('option3').value,
+            document.getElementById('option4').value
+        ],
+        correct_option: document.getElementById('correct_option').value
+    };
+
+    // Add the question
+    try {
+        const response = await fetch(addQuestionUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(questionData)
+        });
+        if (response.ok) {
+            alert('Question added successfully');
+            loadQuestions(); // Refresh questions
+            resetQuestionForm(); // Clear form fields
+        } else {
+            throw new Error('Failed to add question');
+        }
+    } catch (error) {
+        console.error('Error adding question:', error);
+        alert(error.message);
+    }
+}
+
+// Function to reset the question form fields
+function resetQuestionForm() {
+    document.getElementById('question_text').value = '';
+    document.getElementById('option1').value = '';
+    document.getElementById('option2').value = '';
+    document.getElementById('option3').value = '';
+    document.getElementById('option4').value = '';
+    document.getElementById('correct_option').value = '';
+}
+
+
+        async function deleteQuestion(questionId) {
+            const selectedQuiz = document.getElementById('quizSelect').value;
+            const cleanedQuizId = selectedQuiz.split('QUIZ#')[1];
+            const cleanedQuestionId = questionId.split('Q#')[1];
+
+            try {
+                const response = await fetch(deleteQuestionUrl.replace('{quiz_id}', cleanedQuizId).replace('{question_id}', cleanedQuestionId), {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('Question deleted successfully');
+                    loadQuestions();
+                } else {
+                    throw new Error('Failed to delete question');
+                }
+            } catch (error) {
+                console.error('Error deleting question:', error);
+                alert(error.message);
+            }
+        }
+
+        async function deleteQuiz() {
+    const selectedQuiz = document.getElementById('deleteQuizSelect').value;
+    const cleanedQuizId = selectedQuiz.split('QUIZ#')[1];
+    if (!selectedQuiz) return alert('Please select a quiz to delete.');
+
+    try {
+        // Step 1: Fetch the quiz details to retrieve associated questions
+        const response = await fetch(quizDetailUrl.replace('{quiz_id}', cleanedQuizId));
+        if (!response.ok) throw new Error('Failed to fetch questions for the quiz');
+        
+        const quizData = await response.json();
+        const questions = quizData.questions || [];
+
+        // Step 2: Delete each question associated with the quiz
+        for (const question of questions) {
+            const questionId = question.SK.split('Q#')[1]; // Extract the question ID
+            await fetch(deleteQuestionUrl.replace('{quiz_id}', cleanedQuizId).replace('{question_id}', questionId), {
+                method: 'DELETE'
+            });
+        }
+
+        // Step 3: Delete the quiz itself
+        const deleteQuizResponse = await fetch(deleteQuizUrl.replace('{quiz_id}', cleanedQuizId), {
+            method: 'DELETE'
+        });
+        
+        if (deleteQuizResponse.ok) {
+            alert('Quiz and associated questions deleted successfully');
+            loadQuizzes(); // Refresh quiz list
+            document.getElementById('questionsList').innerHTML = ''; // Clear displayed questions
+        } else {
+            throw new Error('Failed to delete quiz');
+        }
+    } catch (error) {
+        console.error('Error deleting quiz:', error);
+        alert(error.message);
+    }
+}
+
+
+        function displayQuestions(questions) {
+            const container = document.getElementById('questionsList');
+            container.innerHTML = questions.map(question => `
+                <div class="question-box">
+                    <strong>${question.question_text}</strong>
+                    <ul>
+                        ${question.options.map((option, index) => `<li>${index + 1}. ${option}</li>`).join('')}
+                    </ul>
+                    <p><strong>Correct Answer:</strong> ${question.correct_option}</p>
+                    <button class="delete-button" onclick="deleteQuestion('${question.SK}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        loadQuizzes();
+    </script>
+
+>>>>>>> dev
 </body>
 </html>
