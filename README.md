@@ -1,4 +1,4 @@
-# QuiZo
+# QuiZo Serverless Quiz App
 # Team-a Bug Squashers
 ![image](https://github.com/user-attachments/assets/0ac94a65-5d52-4c94-8d8e-b0f4b73524d8)
 
